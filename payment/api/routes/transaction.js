@@ -7,5 +7,6 @@ module.exports = function (Controller, options) {
   router.get("/", Controller.getAll);
   router.get("/:id", Controller.get);
   router.post("/:id/operation/pay", Controller.postPSP);
+  router.get("/search", Controller.search);
   return router;
 };

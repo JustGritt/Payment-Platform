@@ -17,9 +17,26 @@ module.exports = function (Service) {
                 next(err);
             }
         },
+        search: async (req, res, next) => {
+            try {
+                const queryParams = req.query; // Ceci récupère tous les paramètres de requête
+
+                // En supposant que Service.search est une fonction qui gère la logique de recherche
+                const results = await Service.search(queryParams);
+
+                if (!results || results.length === 0) {
+                    return res.status(404).json({ message: 'Aucun résultat trouvé' });
+                }
+
+                res.json(results);
+            } catch (err) {
+                next(err);
+            }
+        },
         getAll: async (req, res, next) => {
 
         },
+        
         postPSP: async (req, res, next) => {
             await fetch(`${process.env.PSP_URL}/psp`, {
                 method: 'POST',

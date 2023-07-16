@@ -50,10 +50,6 @@ module.exports = function (connection) {
                     args: [8],
                     msg: "Password must be at least 8 characters long",
                 },
-                is: {
-                    args: /[a-z]/,
-                    msg: "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character",
-                },
             },
         },
         kbis: {

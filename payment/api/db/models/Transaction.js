@@ -1,4 +1,6 @@
 const { Model, DataTypes, UUID, UUIDV4 } = require("sequelize");
+const { getDb } = require('../mongoConnection');
+
 
 module.exports = function (connection) {
     class Transaction extends Model {
@@ -76,30 +78,21 @@ module.exports = function (connection) {
             transaction.transaction_state = transaction_state.dataValues.transaction_id;
         }
     })
+
     Transaction.addHook("afterCreate", async (transaction, options) => {
         const Operation = connection.models.Operation;
-      
         const TransactionHistory = connection.models.TransactionHistory;
-
-        // Assume that you have a field 'state' in the Operation model representing its state
-        // You may need to adjust this logic based on your actual application requirements
-
+    
         const operation = await Operation.findByPk(transaction.operation_id);
         if (operation) {
-            operation.state = "completed"; // Update the state to 'completed' (or any other desired state)
+            operation.state = "completed"; // Update the state to 'completed'
             await operation.save({ fields: ["state"] });
         }
-
+    
         await TransactionHistory.create({
             transaction_state: transaction.transaction_state,
             transaction_id: transaction.transaction_id,
             transaction_date: transaction.transaction_date
-        })
-
-        // Obtenir toutes les transactions précédentes pour le même merchant_id (pour l'historique)
-        const allTransactionsForMerchant = await Transaction.findAll({
-            where: { merchant_id: transaction.merchant_id },
-            order: [['transaction_date', 'DESC']]
         });
     
         // Récupérer toutes les opérations associées à cette transaction
@@ -109,26 +102,50 @@ module.exports = function (connection) {
     
         const db = getDb();
         const collection = db.collection('transactions');
-        const document = {
-            merchant_id: transaction.merchant_id,
-            transaction: transaction.dataValues,
-            transaction_history: allTransactionsForMerchant, // Historique des transactions
-            operations: operationsForTransaction  // Opérations associées
-        };
-        await collection.insertOne(document);
+    
+        // Recherchez le document avec le merchant_id donné
+        const existingDocument = await collection.findOne({ merchant_id: transaction.merchant_id });
+    
+        if (existingDocument) {
+            // Si le document existe, mettez-le à jour avec les nouvelles informations
+    
+            // Mettez à jour les KPI
+            if (!existingDocument.kpi) existingDocument.kpi = {};
+            
+            // Increment the orderCount
+            existingDocument.kpi.orderCount = (existingDocument.kpi.orderCount || 0) + 1;
+            
+            // Calculate the new averageAmount
+            const totalAmount = (existingDocument.kpi.averageAmount || 0) * ((existingDocument.kpi.orderCount || 0) - 1) + transaction.transaction_amount;
+            existingDocument.kpi.averageAmount = totalAmount / existingDocument.kpi.orderCount;
+    
+            // Mettez à jour l'historique des transactions et les opérations directement dans MongoDB
+            await collection.updateOne(
+                { merchant_id: transaction.merchant_id },
+                {
+                    $push: {
+                        transaction_history: transaction.dataValues,
+                        operations: { $each: operationsForTransaction }
+                    },
+                    $set: { 
+                        kpi: existingDocument.kpi 
+                    }
+                }
+            );
+        } else {
+            // Si le document n'existe pas, créez un nouveau document pour le merchant_id
+            const document = {
+                merchant_id: transaction.merchant_id,
+                transaction_history: [transaction.dataValues], // Historique des transactions commence avec cette transaction
+                operations: operationsForTransaction,  // Opérations associées
+                kpi: {
+                    orderCount: 1,
+                    averageAmount: transaction.transaction_amount
+                }
+            };
+            await collection.insertOne(document);
+        }
     });
     
-
-    // Add hook to update the operation_date
-    Transaction.addHook("afterUpdate", async (transaction, options) => {
-        if (transaction.changed('s', 'completed')) {
-            await TransactionHistory.create({
-                transaction_state: transaction.transaction_state,
-                transaction_id: transaction.transaction_id,
-                transaction_date: transaction.transaction_date
-            })
-        }
-    })
-
     return Transaction;
 };

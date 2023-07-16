@@ -48,15 +48,36 @@ module.exports = function (connection) {
     );
 
     Operation.addHook("afterCreate", async (operation, options) => {
-        operation.status = "Pending"; // Pending by default
-        await operation.save({ fields: ["status"] });
         const db = getDb();
-        const collection = db.collection('operations');
-        const document = {
-        operation: operation.dataValues,
-    };
-    await collection.insertOne(document);
-});
+        const collection = db.collection('merchant_operations');
+    
+        // Récupérez la transaction associée à cette opération pour obtenir le merchant_id
+        const Transaction = connection.models.Transaction;
+        const relatedTransaction = await Transaction.findByPk(operation.transaction_id);
+        const merchantId = relatedTransaction.merchant_id;
+    
+        // Recherchez le document avec le merchant_id donné
+        const existingDocument = await collection.findOne({ merchant_id: merchantId });
+    
+        if (existingDocument) {
+            // Si le document existe, mettez-le à jour avec la nouvelle opération
+            existingDocument.operations.push(operation.dataValues);
+    
+            // Enregistrez les modifications
+            await collection.updateOne(
+                { merchant_id: merchantId },
+                { $set: existingDocument }
+            );
+        } else {
+            // Si le document n'existe pas, créez un nouveau document pour le merchant_id
+            const document = {
+                merchant_id: merchantId,
+                operations: [operation.dataValues]
+            };
+            await collection.insertOne(document);
+        }
+    });
+    
 
     return Operation;
 };

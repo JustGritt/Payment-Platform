@@ -2,6 +2,8 @@ const { Sequelize } = require("sequelize");
 const Joi = require("joi");
 const { Transaction, Currency, Client } = require("../db"); // Assuming the Transaction model is defined in "../db"
 const ValidationError = require("../errors/ValidationError");
+const { getDb } = require('../db/mongoConnection'); 
+
 
 module.exports = {
   findAll: async function (criteria, options = {}) {
@@ -46,6 +48,28 @@ module.exports = {
       throw e;
     }
   },
+  search: async function(queryParams) {
+    try {
+        const dbInstance = getDb();
+        console.log(dbInstance, "Hekko sdjfnjisdfjisdnjfndjwskfnjds caca")
+    
+        const collection = dbInstance.collection('transactions');
+
+        // Créez un objet de critères basé sur queryParams
+        const criteria = {};
+
+        if (queryParams.transaction_uid) {
+            criteria.transaction_uid = queryParams.transaction_uid;
+        }
+
+        // Utilisez l'objet criteria pour effectuer une recherche dans MongoDB
+        return await collection.find(criteria).toArray();
+
+    } catch (e) {
+        console.error(e);
+        throw e; 
+    }
+},
   update: async function (criteria, data) {
     try {
       const shemaValidation = Joi.object({
