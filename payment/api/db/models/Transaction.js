@@ -78,15 +78,34 @@ module.exports = function (connection) {
     })
     Transaction.addHook("afterCreate", async (transaction, options) => {
         const Operation = connection.models.Operation;
-
-        // Assume that you have a field 'state' in the Operation model representing its state
-        // You may need to adjust this logic based on your actual application requirements
         const operation = await Operation.findByPk(transaction.operation_id);
         if (operation) {
             operation.state = "completed"; // Update the state to 'completed' (or any other desired state)
             await operation.save({ fields: ["state"] });
         }
+    
+        // Obtenir toutes les transactions précédentes pour le même merchant_id (pour l'historique)
+        const allTransactionsForMerchant = await Transaction.findAll({
+            where: { merchant_id: transaction.merchant_id },
+            order: [['transaction_date', 'DESC']]
+        });
+    
+        // Récupérer toutes les opérations associées à cette transaction
+        const operationsForTransaction = await Operation.findAll({
+            where: { transaction_id: transaction.transaction_id }
+        });
+    
+        const db = getDb();
+        const collection = db.collection('transactions');
+        const document = {
+            merchant_id: transaction.merchant_id,
+            transaction: transaction.dataValues,
+            transaction_history: allTransactionsForMerchant, // Historique des transactions
+            operations: operationsForTransaction  // Opérations associées
+        };
+        await collection.insertOne(document);
     });
+    
 
     return Transaction;
 };

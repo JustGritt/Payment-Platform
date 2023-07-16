@@ -15,6 +15,7 @@
     "@upstash/ratelimit": "^0.4.3",
     "@upstash/redis": "^1.22.0",
     "bcryptjs": "^2.4.3",
+    "card-validator": "8.1.1",
     "cheerio": "^1.0.0-rc.12",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -23,10 +24,10 @@
     "http-proxy-middleware": "^2.0.6",
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.1",
+    "mongodb": "^5.7.0",
     "pg": "^8.11.1",
     "random-id": "^1.0.4",
-    "sequelize": "^6.32.1",
-    "card-validator":"8.1.1"
+    "sequelize": "^6.32.1"
   },
   "devDependencies": {
     "jest": "^29.6.1",
