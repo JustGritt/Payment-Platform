@@ -5,8 +5,10 @@ module.exports = function (Controller, options) {
 
   router.post("/", Controller.post);
   router.get("/", Controller.getAll);
+  router.get("/:transactionId", Controller.getTransactionByTransactionId);
   router.get("/:id", Controller.get);
   router.post("/:id/operation/pay", Controller.postPSP);
-  router.get("/search", Controller.search);
+  router.get('/:merchantId/stats', Controller.getKPIsForMerchant);
+
   return router;
 };

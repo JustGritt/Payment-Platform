@@ -48,22 +48,16 @@ module.exports = {
       throw e;
     }
   },
-  search: async function(queryParams) {
+  searchByTransactionId: async function(transactionId) {
     try {
         const dbInstance = getDb();
-        console.log(dbInstance, "Hekko sdjfnjisdfjisdnjfndjwskfnjds caca")
-    
         const collection = dbInstance.collection('transactions');
 
-        // Créez un objet de critères basé sur queryParams
-        const criteria = {};
+        // Convertir l'ID de transaction en Int32 avant de rechercher
+        const intTransactionId = parseInt(transactionId, 10);
+        const transaction = await collection.findOne({ "transaction_history.transaction_id": intTransactionId });
 
-        if (queryParams.transaction_uid) {
-            criteria.transaction_uid = queryParams.transaction_uid;
-        }
-
-        // Utilisez l'objet criteria pour effectuer une recherche dans MongoDB
-        return await collection.find(criteria).toArray();
+        return transaction;
 
     } catch (e) {
         console.error(e);

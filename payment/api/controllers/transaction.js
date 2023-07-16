@@ -1,3 +1,5 @@
+const kpiService = require('../services/kpi');
+
 module.exports = function (Service) {
     return {
         post: async (req, res, next) => {
@@ -17,18 +19,30 @@ module.exports = function (Service) {
                 next(err);
             }
         },
-        search: async (req, res, next) => {
+        getKPIsForMerchant: async (req, res, next) => {
             try {
-                const queryParams = req.query; // Ceci récupère tous les paramètres de requête
-
-                // En supposant que Service.search est une fonction qui gère la logique de recherche
-                const results = await Service.search(queryParams);
-
-                if (!results || results.length === 0) {
-                    return res.status(404).json({ message: 'Aucun résultat trouvé' });
+                const merchantId = req.params.merchantId;
+                const totalOrders = await kpiService.getMerchantTotalOrders(merchantId);
+                const averageOrderValue = await kpiService.getMerchantAverageOrderValue(merchantId);
+    
+                res.json({
+                    totalOrders,
+                    averageOrderValue
+                });
+            } catch (err) {
+                next(err);
+            }
+        },      
+        getTransactionByTransactionId: async (req, res, next) => {
+            try {
+                const transactionId = req.params.transactionId; // Supposons que l'ID de transaction est passé comme un paramètre dans l'URL
+                const transaction = await Service.searchByTransactionId(transactionId);
+        
+                if (!transaction) {
+                    return res.status(404).json({ message: 'Transaction not found' });
                 }
-
-                res.json(results);
+        
+                res.json(transaction);
             } catch (err) {
                 next(err);
             }
@@ -36,6 +50,8 @@ module.exports = function (Service) {
         getAll: async (req, res, next) => {
 
         },
+
+        
         
         postPSP: async (req, res, next) => {
             await fetch(`${process.env.PSP_URL}/psp`, {
