@@ -13,11 +13,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          path: payment/api
 
       - name: Display checked-out directory
         run: |
+          cd payment/api
           echo "Checked-out directory: $PWD"
 
       - name: Use Node.js
@@ -26,11 +25,12 @@ jobs:
           node-version: '14'
           cache: 'npm'
 
-      - name: Change directory to /payment/api
-        run: cd payment/api
-
       - name: Install dependencies
-        run: npm ci
+        run: |
+          cd payment/api
+          npm ci
 
       - name: Run tests
-        run: npm test
+        run: |
+          cd payment/api
+          npm test
