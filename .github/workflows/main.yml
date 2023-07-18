@@ -14,16 +14,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Display checked-out directory
-        run: |
-          cd payment/api
-          echo "Checked-out directory: $PWD"
-
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
-          cache: 'npm'
+          node-version: '20'
+          #cache: 'npm'
 
       - name: Install dependencies
         run: cd payment/api && npm install
