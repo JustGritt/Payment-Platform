@@ -26,12 +26,8 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          cd payment/api
-          npm ci
+        run: cd payment/api && npm install
 
       - name: Run tests
-        run: |
-          cd payment/api
-          npm test
+        run: cd payment/api && npm test
           
