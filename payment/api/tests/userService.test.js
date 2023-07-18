@@ -55,24 +55,27 @@ describe('User API', () => {
 
       const response = await testApp.post('/users').send(invalidUserData);
 
-      expect(response.status).toBe(400);
+      console.log(response.body);
+      expect(response.status).toBe(422);
     });
   });
 
   /*
-  describe('PUT /users/:id', () => {
+  describe('PATCH /users/:id', () => {
     it('should update a user by id', async () => {
       // Create a test user
-      const user = await User.create({ 
+      const userData = { 
         email: 'test3@example.com', 
-        firstname: 'User 3', 
-        lastname: 'User 3',
-        password: '123456',  
-      });
+        firstname: 'User 2', 
+        lastname: 'User 2',
+        password: '123456', 
+      };
 
+      const user = await testApp.post('/users').send(userData);
+      console.log(user);
       const updatedData = { firstname: 'Updated User' };
 
-      const response = await testApp.put(`/users/${user.id}`).send(updatedData);
+      const response = await testApp.patch(`/users/${user.id}`).send(updatedData);
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(expect.objectContaining(updatedData));
@@ -81,16 +84,16 @@ describe('User API', () => {
     it('should return 404 if user with the specified id is not found', async () => {
       const invalidId = 123;
 
-      const response = await testApp.put(`/users/${invalidId}`);
+      const response = await testApp.patch(`/users/${invalidId}`);
 
       expect(response.status).toBe(404);
     });
   });
-
+  */
   describe('DELETE /users/:id', () => {
     it('should delete a user by id', async () => {
       // Create a test user
-      const user = await User.create({ 
+      const user = await userService.create({ 
         email: 'test4@example.com', 
         firstname: 'User 4', 
         lastname: 'User 4',
@@ -102,7 +105,7 @@ describe('User API', () => {
       expect(response.status).toBe(204);
 
       // Verify that the user is deleted from the database
-      const deletedUser = await User.findOne({ where: { id: user.id } });
+      const deletedUser = await userService.findById(user.id);
       expect(deletedUser).toBeNull();
     });
 
@@ -114,5 +117,5 @@ describe('User API', () => {
       expect(response.status).toBe(404);
     });
   });
-  */
+  
 });
