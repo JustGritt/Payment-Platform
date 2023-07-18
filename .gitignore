@@ -13,6 +13,9 @@ payment/pgdata
 payment/front/node_modules
 payment/front/dist
 
+# merchant Front directory
+merchant/front/node_modules
+merchant/front/dist
 
 # local env files
 .env.local
