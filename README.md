@@ -3,7 +3,7 @@
 ## First you need to build
 `docker compose up -d`
 
-Note: the docker compose has a database, the front and back of the BackOffie.
+Note: the docker compose has a database, the front and back of the BackOffice.
 
 ## Play the migration
 
