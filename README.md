@@ -22,7 +22,8 @@ const { app } = require('./testGlobalSetup');
 describe('I test Something', () => {
   const testApp = supertest(app);
    it('do something', async () => {
-        expect(response.status).toBe(200);
+      const response = await testApp.get(`/someRoute`);
+      expect(response.status).toBe(200);
    }
 }
 
