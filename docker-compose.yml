@@ -19,4 +19,4 @@ services:
     container_name: vuejs-front
     volumes:
       - ./front:/usr/src/app/front
-      - /usr/src/app/front/node_modules
+      # - /usr/src/app/front/node_modules
