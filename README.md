@@ -28,3 +28,13 @@ describe('I test Something', () => {
 }
 
 ```
+
+## Add Jwt verification on one specific route
+
+The authentificationGuard verify if there a berear token and check if the token is valid or not 
+
+```
+app.get("/health", authentificationGuard, (req, res) => {
+  res.sendStatus(200);
+});
+```
