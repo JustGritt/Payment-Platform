@@ -31,7 +31,7 @@ describe('I test Something', () => {
 
 ## Add Jwt verification on one specific route
 
-The authentificationGuard verify if there a berear token and check if the token is valid or not. You can see the full impletation [here](https://github.com/JustGritt/Payment-Platform/blob/main/payment/api/middlewares/authentificationGuard.js)
+The authentificationGuard verify if there a berear token and check if the token is valid or not. You can see the full implementation [here](https://github.com/JustGritt/Payment-Platform/blob/main/payment/api/middlewares/authentificationGuard.js)
 
 ```
 app.get("/health", authentificationGuard, (req, res) => {
