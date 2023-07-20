@@ -2,7 +2,8 @@
 html{
     --blue-primary: #268FFF;
     --grey-fair: #a6a6a6d4;
-    --primary-input: #F7FAFB
+    --primary-input: #F7FAFB;
+    --red-light: #ff6b6b;
 }
 
 .formkit-form{
@@ -89,6 +90,13 @@ html{
 .card {
     border: 1px solid gray;
     padding: 10px;
+  }
+  .error-payment-card {
+    border: 1px solid var(--red-light) !important;
+  }
+
+  .error-payment-card:focus{
+    box-shadow: 0 0 5px var(--red-light) !important;
   }
   
     input[type="checkbox"]:checked ~ .form-input-payment-option {
