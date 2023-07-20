@@ -2,13 +2,20 @@
 node_modules
 /dist
 
-# API directory
-/api/node_modules
-/api/dist
 
-# Front directory
-/front/node_modules
-/front/dist
+# payment API directory
+payment/api/node_modules
+payment/api/dist
+payment/api/.env
+payment/pgdata
+
+# payment Front directory
+payment/front/node_modules
+payment/front/dist
+
+# merchant Front directory
+merchant/front/node_modules
+merchant/front/dist
 
 # local env files
 .env.local
