@@ -12,7 +12,7 @@ const values = ref({
 const is_details_opened = ref(false)
 
 const inputCard = createInput(InputCard)
-const inputCreditCard = createInput(InputCreditCard)
+const inputCreditCard = createInput(InputCreditCard,)
 
 const zodSchema = z.object({
     email: z.string().email(),

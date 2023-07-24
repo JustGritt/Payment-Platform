@@ -1,6 +1,4 @@
 <script setup>
-import VgCreditCard from '@vemlavaraloucagamers/vg-credit-card'
-import { ref } from 'vue'
 const props = defineProps({
     context: Object,
 })
