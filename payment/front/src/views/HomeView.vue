@@ -92,8 +92,8 @@
       </section>
 
       <payment-form>
-        <template #title>
-          Matt Maribojoc
+        <template v-slot="{ click }">
+          <button @click="click">Submit</button>
         </template>
       </payment-form>
 

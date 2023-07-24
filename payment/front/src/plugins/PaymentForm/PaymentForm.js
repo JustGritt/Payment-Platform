@@ -1,4 +1,5 @@
 import Form from "./components/Form.vue";
+import Home from "./components/Home.vue";
 import vSelect from 'vue-select'
 import config from './formkit.config.js'
 import 'vue-select/dist/vue-select.css';
@@ -14,7 +15,7 @@ export default {
     install: (app, options) => {
         app.component('v-select', vSelect)
         app.use(plugin, defaultConfig(config))
-        app.component("payment-form", Form);
+        app.component("payment-form", Home);
         app.directive('mask', VueRestrictedInputDirective);
         app.use(VueCreditCardValidation);
     },

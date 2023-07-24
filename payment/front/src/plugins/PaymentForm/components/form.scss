@@ -1,0 +1,270 @@
+html {
+  --blue-primary : #268FFF;
+  --grey-fair    : #a6a6a6d4;
+  --grey-gen: #e5e5e5;
+  --primary-input: #F7FAFB;
+  --red-light    : #ff6b6b;
+}
+
+.header-payment-form {
+  border-bottom   : 1px solid var(--grey-gen);
+  position        : sticky;
+  top             : 0;
+  width           : 100%;
+  background-color: white;
+  padding         : 10px 20px;
+  border-radius: 12px 12px  0 0;
+  margin-bottom: 10px;
+  .logo-header-payment-form{
+    display         : flex;
+    flex-direction: row;
+    justify-content: space-between;
+  
+    img.logo-header-payment-form {
+      height: 45px;
+      width: 98px;
+      transform: scale(2);
+      margin-top: 4px;
+    }
+    .details-payment-form{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      >h1{
+        font-size  : 15px;
+        font-weight: 600;
+      }
+      button{
+        color: var(--grey-fair);
+      }
+    }
+  }
+  .details-payment-info{
+    border-top         : 1px solid var(--grey-gen);
+    margin-top: 12px;
+    >ul{
+      // padding-top: 4px;
+      li{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0px;
+        &.tva{
+          border-bottom: 1px solid var(--grey-gen);
+          border-top: 1px solid var(--grey-gen);
+          &:last-child{
+            border-bottom: none;
+            border-top: none;
+          }
+          color: var(--grey-fair)
+      
+        }
+      }
+    }
+  }
+
+
+  
+}
+  #form-payment .formkit-messages #form-payment-incomplete{
+    display: none;
+  }
+.formkit-form {
+  max-width         : 600px;
+  width             : 100%;
+  min-height        : 930px;
+  -webkit-box-shadow: 0px 0px 15px 5px #e5e5e5;
+  box-shadow        : 0px 0px 15px 5px #e5e5e5;
+  border-radius     : 12px;
+  padding-bottom: 20px;
+  section {
+    padding: 0px 20px;
+  }
+}
+
+.header-title {
+  font-size  : 12px;
+  font-weight: 600;
+}
+
+.formkit-form .label-title {
+  font-size     : 18px;
+  font-weight   : 600;
+  display       : flex;
+  flex-direction: column;
+  color         : #404660;
+}
+
+.form-input-payment {}
+
+.formkit-form .form-payments-actions {
+  display        : flex;
+  justify-content: flex-end;
+  gap            : 10px;
+  margin-top     : 20px;
+}
+
+.form-input-payment .little-label {
+  font-size  : 14px;
+  color      : #404660;
+  font-weight: 600;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+.text-20 {
+  font-size: 20px;
+}
+
+.text-30 {
+  font-size: 30px;
+}
+
+.form-input-payment input,
+.form-input-payment select {
+  padding         : 11px 13px;
+  background-color: var(--primary-input);
+  margin-top      : 7px;
+  width           : 100%;
+  border-radius   : 6px;
+  font-size       : 13px;
+  border          : 1px solid transparent;
+}
+
+.form-input-payment input:focus,
+.form-input-payment select:focus {
+  outline   : none !important;
+  border    : 1px solid var(--blue-primary);
+  box-shadow: 0 0 5px var(--blue-primary);
+}
+
+.formkit-form hr.form-separator {
+  margin: 20px 0;
+}
+
+.formkit-form .form-input-payment-options .type_payment_active {
+  background-color: #fff;
+  border          : 1px solid var(--blue-primary);
+}
+
+.formkit-form .form-input-payment-options {
+  overflow-x: scroll;
+  display   : flex;
+  gap       : 10px;
+}
+
+.form-input-payment-options .form-input-payment-option {
+  max-width       : 200px;
+  width           : 100%;
+  height          : 70px;
+  border          : 1px solid #e5e5e5;
+  background-color: var(--primary-input);
+  border-radius   : 5px;
+  display         : flex;
+  flex-direction  : column;
+  justify-content : center;
+  align-items     : center;
+}
+
+.card {
+  border : 1px solid gray;
+  padding: 10px;
+}
+
+.formkit-form .error-payment-card {
+  border: 1px solid var(--red-light) !important;
+}
+
+.error-payment-card:focus {
+  box-shadow: 0 0 5px var(--red-light) !important;
+}
+
+input[type="checkbox"]:checked~.form-input-payment-option {
+  /* Add your desired border color here */
+  border-color: red;
+}
+
+
+.chk-circle>i {
+  position     : relative;
+  float        : left;
+  display      : block;
+  width        : 6px;
+  height       : 6px;
+  margin-top   : 5px;
+  border-radius: 100px;
+  cursor       : pointer;
+  z-index      : 1;
+  border       : 3px solid #ddd;
+  background   : #fff;
+  cursor       : pointer;
+}
+
+.chk-circle>label {
+  cursor: pointer;
+  margin: 0 10px auto;
+
+}
+
+.chk-hide {
+  visibility: hidden;
+}
+
+.chk-circle>input[type=checkbox]:checked+i {
+  border: 3px solid green;
+}
+
+.formkit-form .btn-save-payment .formkit-wrapper .formkit-input {
+  background-color: var(--blue-primary);
+  color           : #fff;
+  border          : 1px solid var(--blue-primary);
+  padding         : 10px 20px;
+  border-radius   : 5px;
+  font-size       : 14px;
+  font-weight     : 600;
+  min-width       : 130px;
+}
+
+.formkit-form .btn-save-payment .formkit-wrapper .formkit-input:hover {
+  background-color: #fff;
+  color           : var(--blue-primary);
+}
+
+.formkit-form .btn-cancel-payment {
+  padding         : 10px 20px;
+  background-color: #fff;
+  border          : 1px solid var(--grey-fair);
+  color           : black;
+  min-width       : 130px;
+  border-radius   : 5px;
+}
+
+.formkit-form .btn-cancel-payment:hover {
+  background-color: var(--grey-fair);
+  color           : black;
+}
+
+.formkit-form [data-invalid] .formkit-wrapper .formkit-input {
+  border    : 1px solid var(--red-light) !important;
+  box-shadow: 0 0 5px var(--red-light) !important;
+}
+
+[data-message-type] {
+  color      : var(--red-light);
+  font-size  : 12px;
+  font-weight: 600;
+}
+
+.error-text-payment {
+  color      : var(--red-light);
+  font-size  : 12px;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .form-input-payment-options .form-input-payment-option {
+    width: 150px;
+  }
+}

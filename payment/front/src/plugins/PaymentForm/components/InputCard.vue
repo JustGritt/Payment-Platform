@@ -4,7 +4,7 @@ const props = defineProps({
     context: Object,
 })
 
-const selected = ref('')
+const selected = ref(props.context.node.value)
 
 
 function handleInput(val) {
@@ -32,6 +32,7 @@ function handleInput(val) {
 /* input[type=checkbox].hidden {
         display: none;
     } */
+
 .cursor-pointer {
     cursor: pointer;
 }

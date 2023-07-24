@@ -9,31 +9,35 @@ const props = defineProps({
 
 <template>
     <div class="form-group">
-        {{ cardErrors }}
-        <label>Card number</label>
-        <input :oninput="validateCardNumber" :class="['form-control', (cardErrors?.cardNumber) ? 'error-payment-card' : '']" v-cardformat:formatCardNumber v-model="cardCvc"
-            :data-error="(cardErrors?.cardNumber) ? true : false" placeholder="#### #### #### ####" type="tel">
+        <label class="little-label">Card number
+            <input :oninput="validateCardNumber"
+                :class="['form-control', (cardErrors?.cardNumber) ? 'error-payment-card' : '']"
+                v-cardformat:formatCardNumber v-model="cardCvc" :data-error="(cardErrors?.cardNumber) ? true : false"
+                placeholder="#### #### #### ####" type="tel"></label>
         <div v-if="cardErrors.cardNumber" class="error">
-            <small>{{ cardErrors.cardNumber }}</small>
+            <small class="error-text-payment">{{ cardErrors.cardNumber }}</small>
         </div>
     </div>
     <div class="expiration">
-        <label>Expiry</label>
-        <input :class="[(cardErrors?.cardExpiry) ? 'error-payment-card' : '']" :oninput="validateCardExpiry"  v-cardformat:formatCardExpiry>
+        <label class="little-label">Expiry</label>
+        <input :class="[(cardErrors?.cardExpiry) ? 'error-payment-card' : '']" :oninput="validateCardExpiry"
+            v-cardformat:formatCardExpiry>
         <div class="error" v-if="cardErrors.cardExpiry">
-            <small>{{ cardErrors.cardExpiry }}</small>
+            <small class="error-text-payment">{{ cardErrors.cardExpiry }}</small>
         </div>
     </div>
     <div class="cvc">
-        <label>Card CVC</label>
-        <input :class="[(cardErrors?.cardCvc) ? 'error-payment-card' : '']" :oninput="validateCardCVC"  v-cardformat:formatCardCVC>
+        <label class="little-label">Card CVC</label>
+        <input :class="[(cardErrors?.cardCvc) ? 'error-payment-card' : '']" :oninput="validateCardCVC"
+            v-cardformat:formatCardCVC>
         <div class="error" v-if="cardErrors.cardCvc">
-            <small>{{ cardErrors.cardCvc }}</small>
+            <small class="error-text-payment">{{ cardErrors.cardCvc }}</small>
         </div>
     </div>
 </template>
   
-<script>
+<script >
+
 export default {
     computed: {
         cardBrandClass() {
@@ -52,7 +56,7 @@ export default {
     methods: {
         validateCardNumber: function (e) {
             if (!this.$cardFormat.validateCardNumber(e.target.value)) {
-                this.cardErrors.cardNumber = "Invalid Credit Card Number.";
+                this.cardErrors.cardNumber = "Invalid credit card.";
             } else {
                 this.cardErrors.cardNumber = null;
                 this.validate();
@@ -60,7 +64,7 @@ export default {
         },
         validateCardExpiry: function (e) {
             if (!this.$cardFormat.validateCardExpiry(e.target.value)) {
-                this.cardErrors.cardExpiry = "Invalid Expiration Date.";
+                this.cardErrors.cardExpiry = "Invalid expiration date.";
             } else {
                 this.cardErrors.cardExpiry = null;
                 this.validate();
@@ -77,7 +81,11 @@ export default {
         validate: function () {
             // if there is no errors send 
             if (!Object.keys(this.cardErrors).length) {
-                props.context.node.input(e.target.value)
+                props.context.node.input({
+                    number: this.$data.cardNumber,
+                    cvc: this.$data.cardCvc,
+                    expiry: this.$data.cardExpiry,
+                })
             }
         },
         reset: function () {
@@ -128,9 +136,8 @@ export default {
             }
         }
     },
-    onMounted() {
-        this.$refs.cardNumInput.focus();
-    }
+
+
 };
 </script>
 

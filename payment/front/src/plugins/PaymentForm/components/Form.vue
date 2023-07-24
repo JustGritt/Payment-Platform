@@ -6,7 +6,11 @@ import { z } from 'zod'
 import InputCard from './InputCard.vue'
 import InputCreditCard from './InputCreditCard.vue'
 
-const values = ref({})
+const values = ref({
+    "type_payment": "card"
+})
+const is_details_opened = ref(false)
+
 const inputCard = createInput(InputCard)
 const inputCreditCard = createInput(InputCreditCard)
 
@@ -24,35 +28,66 @@ const zodSchema = z.object({
 })
 
 const [zodPlugin, submitHandler] = createZodPlugin(
-  zodSchema,
-  async (formData) => {
-    // fake submit handler, but this is where you
-    // do something with your valid data.
-    await new Promise((r) => setTimeout(r, 2000))
-    alert('Form was submitted!')
-    console.log(formData)
-  }
+    zodSchema,
+    async (formData) => {
+        // fake submit handler, but this is where you
+        // do something with your valid data.
+        await new Promise((r) => setTimeout(r, 2000))
+        alert('Form was submitted!')
+        console.log(formData)
+    }
 )
 
 </script>
-<style >
-    @import "./form.css";
+<style lang="scss">
+@import "./form.scss";
 </style>
-<template>
-    <FormKit type="form" class="form-payment-container" outer-class="i-will-be-appended" v-model="values"  :plugins="[zodPlugin]" @submit="submitHandler">
-        <div class="form-input-payment">
-            <label for="email">Contact info</label>
-            <input name="email" id="email" placeholder="Enter email" type="email" />
-        </div>
+
+<template >
+<FormKit  id="form-payment" validation-messages="" on-submit="" :actions="false" type="form" class="form-payment-container" outer-class="i-will-be-appended" v-model="values"
+        :plugins="[zodPlugin]"  @submit="submitHandler">
+        <header class="header-payment-form">
+            <div class="logo-header-payment-form">
+                <img class="logo-header-payment-form" src="../assets/strapouz.svg" />
+                <div class="details-payment-form">
+                    <h1>42.99€</h1>
+                    <button @click="is_details_opened = !is_details_opened" type="button">Details <i
+                            :class="is_details_opened ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" /></button>
+                </div>
+            </div>
+            <div v-if="is_details_opened" class="details-payment-info">
+                <ul>
+                    <li>
+                        <span class="little-label">Name</span>
+                        <h4>12.86 €</h4>
+                    </li>
+                    <li class="tva">
+                        <span class="little-label">Tva</span>
+                        <h4>+ 0.20%</h4>
+                    </li>
+                    <li>
+                        <span class="label-title">Total</span>
+                    <h4 class="label-title">13.06 €</h4>
+                    </li>
+                </ul>
+            </div>
+
+        </header>
+        <section class="form-input-payment">
+            <label for="email" class="label-title">Contact info</label>
+            <FormKit type="text" name="email" id="email" placeholder="Enter email" />
+        </section>
+
         <hr class="form-separator">
         <section>
-            <h2 class="label-title">Shipping</h2>
+            <h2 class="label-title">Shipping {{ props }}</h2>
             <div class="form-input-payment mt-10">
                 <label for="name" class="little-label">Name</label>
                 <FormKit type="text" name="name" id="name" placeholder="Enter name" outer-class="$reset formik-inner" />
             </div>
             <div class="form-input-payment mt-10">
-                <FormKit type="select" label="Country or region" outer-class="$reset little-label" name="region" :options="[
+                <label for="name" class="little-label">Country or region</label>
+                <FormKit type="select" outer-class="$reset little-label" name="region" :options="[
                     'Monaco',
                     'Vatican City',
                     'Maldives',
@@ -68,30 +103,30 @@ const [zodPlugin, submitHandler] = createZodPlugin(
         <section>
             <h2 class="label-title">Payment</h2>
             <div>
-            <FormKit validation="required"  :type="inputCard" :class="font - size20" name="type_payment" :options="[
+                <FormKit validation="required" :type="inputCard" class="font - size20" name="type_payment" :options="[
                     { label: 'Card', value: 'card', attrs: { icon: 'fas fa-credit-card text-20', class_active: 'type_payment_active' } },
-                    { label: 'Google Pay', value: 'googlepay', attrs: {disabled: true, icon: 'fab fa-google-pay text-30', class_active: 'type_payment_active' } },
+                    { label: 'Google Pay', value: 'googlepay', attrs: { disabled: true, icon: 'fab fa-google-pay text-30', class_active: 'type_payment_active' } },
                     { label: 'Cash', value: 'cash', attrs: { disabled: true, icon: 'fas fa-money-bill-alt text-20', class_active: 'type_payment_active' } },
                 ]" :classes="{
-                        outer: 'foo-bar',
-                        inner: {
-                            $reset: true,
-                            'form-input-payment-options': true
-                        }
-                    }" 
-                     />
+    outer: 'foo-bar',
+    inner: {
+        $reset: true,
+        'form-input-payment-options': true
+    }
+}" />
 
                 <div class="form-input-payment mt-10">
-                    <FormKit  :type="inputCreditCard" label="card" type="number" name="card" id="card" placeholder="1234 5678 9012 3456" />
+                    <FormKit validation="required" :type="inputCreditCard" type="number" name="cardNumber" id="cardNumber"
+                        placeholder="1234 5678 9012 3456" />
                 </div>
             </div>
         </section>
+        <section class="form-payments-actions">
+            <FormKit type="submit" label="Pay now" outer-class="$reset btn-save-payment" />
+            <button type="button" @click="() => { this.$emit('close') }" class="btn-cancel-payment">
+                Cancel
+            </button>
+        </section>
     </FormKit>
-    <pre wrap>{{ values }}</pre>
 </template>
 <link href="https://cdn.staticaly.com/gh/hung1001/font-awesome-pro/4cac1a6/css/all.css" rel="stylesheet" type="text/css" />
-
-
-<script>
-
-</script>
