@@ -26,6 +26,7 @@
     "tailwindcss-animate": "^1.0.5",
     "vue": "^3.3.2",
     "vue-apexcharts": "^1.6.2",
+    "vue-credit-card-validation": "^1.0.5",
     "vue-router": "^4.2.0",
     "vue3-apexcharts": "^1.4.1",
     "zod": "^3.21.4"
