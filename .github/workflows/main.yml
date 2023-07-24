@@ -25,4 +25,13 @@ jobs:
 
       - name: Run tests
         run: cd payment/api && npm test
+      
+      - name: Start the Frontend server (optional, if required for e2e tests)
+        run: cd payment/front && yarn serve &
+
+      - name: Wait for the Frontend server to start (optional, if required for e2e tests)
+        run: sleep 10
+
+      - name: Run e2e tests
+        run: cd payment/front && yarn test:e2e
           
