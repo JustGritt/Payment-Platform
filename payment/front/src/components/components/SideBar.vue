@@ -1,10 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router' 
 import { inject } from 'vue'
-
 const user  = inject('userState')
-
-console.log(user.role)
 </script>
 
 
