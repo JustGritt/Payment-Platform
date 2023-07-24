@@ -32,6 +32,9 @@
   "peerDependencies": {
     "vue-template-compiler": "^2.0.0"
   },
+  "engines": {
+    "yarn": "^1.22.19"
+  },
   "devDependencies": {
     "@playwright/test": "^1.33.0",
     "@vitejs/plugin-vue": "^4.2.3",
