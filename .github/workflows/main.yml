@@ -26,6 +26,9 @@ jobs:
       - name: Run tests
         run: cd payment/api && npm test
       
+      - name: Install all requirement
+        run: cd payment/front && yarn install
+       
       - name: Start the Frontend server (optional, if required for e2e tests)
         run: cd payment/front && yarn serve &
 
