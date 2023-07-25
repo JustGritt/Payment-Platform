@@ -6,20 +6,20 @@
 
 @font-face {
     font-family: "blooming";
-    src: url("/public/Blooming-Elegant-Font/BloomingElegant.otf") format("opentype");
-    src: url("../../public/Blooming-Elegant-Font/Blooming\ Elegant\ Sans\ Bold.otf") format("opentype"),
+    src: url("/Blooming-Elegant-Font/BloomingElegant.otf") format("opentype");
+    src: url("/Blooming-Elegant-Font/Blooming\ Elegant\ Sans\ Bold.otf") format("opentype"),
         url("/Blooming-Elegant-Font/BloomingElegant_Monoline.otf") format("opentype");
 }
 
 @font-face {
     font-family: "pistacho";
-    src: url("/public/Pistacho-free/Estudio\ Calderon\ -\ Pistacho-Sans5freedemo.otf") format("opentype");
+    src: url("/Pistacho-free/Estudio\ Calderon\ -\ Pistacho-Sans5freedemo.otf") format("opentype");
 }
 
 @font-face {
     font-family: "showcasesansmini";
-    src: url("/public/showcasesansmini/Latinotype\ -\ ShowcaseSans.otf") format("opentype");
-    src: url("/public/showcasesansmini/Latinotype\ -\ ShowcaseSansMini.otf") format("opentype");
+    src: url("/showcasesansmini/Latinotype\ -\ ShowcaseSans.otf") format("opentype");
+    src: url("/showcasesansmini/Latinotype\ -\ ShowcaseSansMini.otf") format("opentype");
 }
 
 
