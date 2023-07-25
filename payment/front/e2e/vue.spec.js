@@ -36,5 +36,11 @@ test('visits the app root url', async ({ page }) => {
   const parametersHeader = await page.waitForSelector('aside > h3');
   expect(parametersHeader).toBeTruthy();
 
+  // Logs
+  const logButton = await page.waitForSelector('#router-list > #router-list-others > a:nth-child(1)');
+  await logButton.click();
+  await page.waitForLoadState('domcontentloaded');
+  const logHeader = await page.waitForSelector('.about > h1');
+  expect(logHeader).toBeTruthy();
 
 });
