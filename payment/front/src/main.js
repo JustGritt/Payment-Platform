@@ -14,7 +14,10 @@ app.use(VueApexCharts);
 app.provide('userState', userState);
 app.config.globalProperties.$apexcharts = VueApexCharts;
 
-app.use(PaymentForm)
+app.use(PaymentForm,{
+    CLIENT_PUBLIC_TOKEN: '735sd0749388',
+    CLIENT_SECRET_TOKEN: '091211dz2724'
+})
 
 app.mount('#app')
 
