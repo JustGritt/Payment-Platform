@@ -1,40 +1,75 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = function (connection) {
-    const Transaction = connection.define("Transaction", {
-        client_id: DataTypes.INTEGER,
-        merchant_id: DataTypes.INTEGER,
-        currency_id: DataTypes.INTEGER,
-        token: {
-            type: DataTypes.STRING,
-            unique: true,
-            allowNull: false,
-            validate: {
-                notEmpty: {
-                    msg: "You have to provide a valid token",
+    const Transaction = connection.define(
+        "Transaction",
+        {
+            transaction_id: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+            },
+            operation_id: DataTypes.INTEGER,
+            currency_id: DataTypes.INTEGER,
+            client_id: DataTypes.INTEGER,
+            // merchant_id: DataTypes.INTEGER, // TODO: Add later
+
+            transaction_amount: DataTypes.FLOAT,
+            transaction_date: DataTypes.DATE,
+            transaction_uid: {
+                type: DataTypes.STRING,
+                unique: true,
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "You have to provide a valid token",
+                    },
                 },
             },
+            creditCard: {
+                type: DataTypes.STRING,
+                unique: true,
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "You have to provide a valid credit card number",
+                    },
+                },
+            },
+            creditCardExpiryDate: DataTypes.DATE,
+            // external_reference: DataTypes.STRING, // TODO: Add later if needed
         },
-        amount: DataTypes.FLOAT,
-        isRefund: DataTypes.BOOLEAN,
-        transaction_date: DataTypes.DATE,
-        // external_reference: DataTypes.STRING, // TODO: Add later if needed
-    }, {
-        sequelize: connection,
-        tableName: "transactions", // Correct table name
-    });
+        {
+            sequelize: connection,
+            tableName: "transactions",
+        }
+    );
 
     // Define associations here if necessary
     Transaction.belongsTo(connection.models.Client, {
-        foreignKey: 'client_id',
+        foreignKey: "client_id",
     });
 
     Transaction.belongsTo(connection.models.Currency, {
-        foreignKey: 'currency_id',
+        foreignKey: "currency_id",
     });
 
-    // TODO: Add hook later
-    // Transaction.addHook("beforeCreate", updateTransactionState);
+    Transaction.belongsTo(connection.models.Operation, {
+        foreignKey: "operation_id",
+    });
+
+    // Add hook to update the transaction state
+    Transaction.addHook("afterCreate", async (transaction, options) => {
+        const Operation = connection.models.Operation;
+
+        // Assume that you have a field 'state' in the Operation model representing its state
+        // You may need to adjust this logic based on your actual application requirements
+        const operation = await Operation.findByPk(transaction.operation_id);
+        if (operation) {
+            operation.state = "completed"; // Update the state to 'completed' (or any other desired state)
+            await operation.save({ fields: ["state"] });
+        }
+    });
 
     return Transaction;
 };
