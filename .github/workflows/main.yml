@@ -114,3 +114,4 @@ jobs:
           docker-compose down --remove-orphans
           docker-compose -f /home/app/docker-compose.prod.yml up -d --build
 
+          
