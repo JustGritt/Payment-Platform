@@ -3,7 +3,7 @@ require("dotenv").config()
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const port = process.env.PORT || 3006;
+const port = process.env.PORT || 3002;
 
 
 app.use(cors());
@@ -19,37 +19,47 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-app.post("/psp", (req, res) => {
-  const { body } = req;
-  const { amount, currency, reference, operation_id } = body;
-  const { email, name } = body.customer;
-  const { number, expirationMonth, expirationYear, cvv } = body.card;
-  const { ip } = req;
-  const { userAgent } = req.headers;
 
-  if (!amount || !currency || !reference || !description || !email || !name || !number || !expirationMonth || !expirationYear || !cvv || !ip || !userAgent) {
-    return res.sendStatus(400);
-  }
+app.post("/psp", (req, res) => {
+  console.log(req.body);
+  const { body } = req;
+  const { amount, operation_id } = body;
 
   if (amount < 0 || amount > 999999999) {
     return res.sendStatus(400);
   }
+  
+  res.sendStatus(202)
 
-  res.sendStatus(202);
-
-
-  //wait 10 seconds
+  // Wait for 10 seconds
   setTimeout(() => {
-    //send a payment response
-    res.json({
-      status: "ok",
-      operation_id,
-      message: "Payment is successful",
-    });
-  } , 10000);
-
+    // Send a payment response
+    fetch(process.env.STRAPOUZ_WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        operation_id,
+        status: "approved",
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to send payment response");
+        }
+        console.log("Payment response sent successfully");
+      })
+      .catch((error) => {
+        console.error("Error sending payment response:", error.message);
+      });
+  }, 10000);
 });
 
+
+app.get("/" , (req, res) => {
+  res.send("Hello World!");
+});
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

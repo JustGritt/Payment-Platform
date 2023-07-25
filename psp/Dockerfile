@@ -1,7 +1,7 @@
 FROM node:18
 
 # Set the working directory inside the container
-WORKDIR /app/payment/api
+WORKDIR /app/psp
 
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
@@ -13,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Expose the port your app listens on
-ENV PORT=${PORT:-3000}
+ENV PSP_PORT=${PSP_PORT:-3002}
 
 # Define the command to start your Node.js app
 CMD ["node", "server.js"]
