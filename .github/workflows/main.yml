@@ -115,7 +115,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            docker-compose down --remove-orphans
+            docker-compose -f /home/app/docker-compose.prod.yml down --remove-orphans
             docker-compose -f /home/app/docker-compose.prod.yml up -d --build
 
           
