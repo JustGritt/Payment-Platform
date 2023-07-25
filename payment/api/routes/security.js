@@ -1,6 +1,6 @@
 const { Router } = require("express");
 
-module.exports = function (userService) {
+module.exports = function (userService, merchantService) {
   const router = Router();
 
   router.post("/login", async function (req, res) {
@@ -14,6 +14,39 @@ module.exports = function (userService) {
     }
 
     res.json({ token: user.generateToken() });
+  });
+
+  router.post("/register", async function (req, res) {
+    try {
+      // Récupérer les données du formulaire d'inscription du marchand depuis le corps de la requête
+      const {
+        name,
+        kbis,
+        contactInfo,
+        redirectUrlConfirmation,
+        redirectUrlCancellation,
+        currency,
+      } = req.body;
+
+      // Créer un nouvel enregistrement pour le marchand dans la base de données
+      const newMerchant = await merchantService.create({
+        name,
+        kbis,
+        contactInfo,
+        redirectUrlConfirmation,
+        redirectUrlCancellation,
+        currency,
+      });
+
+      // Répondre avec le nouveau marchand créé
+      res.status(201).json(newMerchant);
+    } catch (error) {
+      // Gérer les erreurs
+      console.error(error);
+      res.status(500).json({
+        error: "Une erreur est survenue lors de l'enregistrement du marchand.",
+      });
+    }
   });
 
   return router;
