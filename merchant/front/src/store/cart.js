@@ -1,12 +1,12 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useCartStore = defineStore('cart', {
+export const useCartStore = defineStore("cart", {
   state: () => ({
     items: getStoredItems(), // Load items from local storage on initialization
   }),
   actions: {
     addToCart(product) {
-      const existingItem = this.items.find(item => item.id === product.id);
+      const existingItem = this.items.find((item) => item.id === product.id);
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
@@ -26,7 +26,7 @@ export const useCartStore = defineStore('cart', {
       }
     },
     saveItems() {
-      localStorage.setItem('cartItems', JSON.stringify(this.items));
+      localStorage.setItem("cartItems", JSON.stringify(this.items));
     },
   },
   getters: {
@@ -42,13 +42,16 @@ export const useCartStore = defineStore('cart', {
     },
     cartTotal() {
       // Calculate the total price of all items in the cart
-      return this.items.reduce((total, item) => total + item.price * item.quantity, 0);
+      return this.items.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
     },
-  },  
+  },
 });
 
 // Helper function to initialize the cart items from local storage
 function getStoredItems() {
-  const storedItems = localStorage.getItem('cartItems');
+  const storedItems = localStorage.getItem("cartItems");
   return storedItems ? JSON.parse(storedItems) : [];
 }

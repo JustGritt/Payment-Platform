@@ -1,58 +1,61 @@
-import { reactive, provide, inject } from 'vue';
+import { reactive, provide, inject } from "vue";
 
 const state = reactive({
   products: [
     {
       id: 1,
-      name: 'Organize Basic Set (Walnut)',
-      price: '$149',
+      name: "Organize Basic Set (Walnut)",
+      price: "$149",
       rating: 5,
       reviewCount: 38,
-      imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-01.jpg',
-      imageAlt: 'TODO',
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-01.jpg",
+      imageAlt: "TODO",
       availableStock: 3,
-      href: '#',
+      href: "#",
     },
     {
       id: 2,
-      name: 'Organize Pen Holder',
-      price: '$15',
+      name: "Organize Pen Holder",
+      price: "$15",
       rating: 5,
       reviewCount: 18,
-      imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-02.jpg',
-      imageAlt: 'TODO',
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-02.jpg",
+      imageAlt: "TODO",
       availableStock: 5,
-      href: '#',
+      href: "#",
     },
     {
       id: 3,
-      name: 'Organize Sticky Note Holder',
-      price: '$15',
+      name: "Organize Sticky Note Holder",
+      price: "$15",
       rating: 5,
       reviewCount: 14,
-      imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-03.jpg',
-      imageAlt: 'TODO',
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-03.jpg",
+      imageAlt: "TODO",
       availableStock: 4,
-      href: '#',
+      href: "#",
     },
     {
       id: 4,
-      name: 'Organize Phone Holder',
-      price: '$15',
+      name: "Organize Phone Holder",
+      price: "$15",
       rating: 4,
       reviewCount: 21,
-      imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-04.jpg',
-      imageAlt: 'TODO',
+      imageSrc:
+        "https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-04.jpg",
+      imageAlt: "TODO",
       availableStock: 5,
-      href: '#',
+      href: "#",
     },
     // More products...
   ],
   cart: [],
 });
 
-
-const storeSymbol = Symbol('store-product');
+const storeSymbol = Symbol("store-product");
 
 export function provideStore() {
   provide(storeSymbol, state);
@@ -62,9 +65,8 @@ export function useStore() {
   const store = inject(storeSymbol);
 
   if (!store) {
-    throw new Error('store is not provided');
+    throw new Error("store is not provided");
   }
 
   return store;
 }
-
