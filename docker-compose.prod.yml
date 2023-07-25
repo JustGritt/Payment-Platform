@@ -13,7 +13,7 @@ services:
       - ./payment/pgdata:/var/lib/postgresql/data
 
   payment-server:
-    image: popokola/payment-server:lates
+    image: popokola/payment-api:latest
     ports:
       - "${BACK_PORT:-3000}:${BACK_PORT:-3000}" 
     container_name: node-api
