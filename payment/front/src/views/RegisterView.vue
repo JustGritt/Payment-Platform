@@ -119,9 +119,10 @@
                                 <label for="phone-number"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Numéro de
                                     téléphone</label>
-                                <input type="number" v-model="phoneNumber" name="phone-number" id="phone-number"
+                                <input type="tel" v-model="phoneNumber" name="phone-number" id="phone-number"
+                                    pattern="[0-9]{10}"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="+(33) 01 23 45 67 89" required />
+                                    placeholder="+(33) 01 23 45 67 89"  />
                             </div>
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="zip-code"
@@ -145,19 +146,19 @@
                         </h3>
                         <div class="grid grid-cols-6 gap-6">
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="last-name"
+                                <label for="lastname"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom de
                                     contact</label>
-                                <input type="text" v-model="contactLastName" name="last-name" id="last-name"
+                                <input type="text" v-model="LastName" name="lastname" id="lastname"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="John" required />
                             </div>
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="first-name"
+                                <label for="firstname"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prénom
                                     de
                                     contact</label>
-                                <input type="text" v-model="contactFirstName" name="first-name" id="first-name"
+                                <input type="text" v-model="FirstName" name="firstname" id="firstname"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Doe" required />
                             </div>
@@ -175,6 +176,13 @@
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Ventes" required />
                             </div>
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="Email"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email de contact</label>
+                                <input type="email" v-model="contactEmail" name="contactEmail" id="contactEmail"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Email de contact" required />
+                            </div>
                             <div class="col-span-6 sm:col-full">
                                 <button
                                     class="px-3 py-2 my-3 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
@@ -191,7 +199,7 @@
 </template>
 
 
-<!-- <script>
+<script>
     // Importez le service API
     import apiService from "@/services/apiService";
 
@@ -202,8 +210,8 @@
                 email: "",
                 password: "",
                 confirmPassword: "",
-                contactFirstName: "",
-                contactLastName: "",
+                FirstName: "",
+                LastName: "",
                 role: "",
                 department: "",
                 country: "",
@@ -212,44 +220,48 @@
                 phoneNumber: "",
                 zipCode: "",
                 kbis: "",
+                contactEmail: "",
             };
         },
         methods: {
             async registerMerchant() {
                 try {
-                    // Obtenez les données du formulaire
+                    // Données du formulaire
                     const merchantData = {
                         name: this.companyName,
                         email: this.email,
                         kbis: this.kbis,
-                        redirectUrlConfirmation: "", // Ajoutez le champ redirectUrlConfirmation ici
-                        redirectUrlCancellation: "", // Ajoutez le champ redirectUrlCancellation ici
+                        redirectUrlConfirmation: "",
+                        redirectUrlCancellation: "",
                     };
 
-                    // Appelez la fonction d'enregistrement du marchand du service API
-                    const newMerchant = await apiService.createMerchant(merchantData);
-
-                    // Obtenez les données du formulaire de contact
+                   
+                    // Données du formulaire de contact
                     const contactData = {
-                        firstname: this.contactFirstName,
-                        lastname: this.contactLastName,
+                        firstname: this.FirstName,
+                        lastname: this.LastName,
                         email: this.contactEmail,
                         // Ajoutez d'autres propriétés ici...
-                        merchant_idmerchant: newMerchant
-                            .id, // Assurez-vous que vous avez le champ "merchant_idmerchant" dans les données du contact
                     };
 
-                    // Appelez la fonction d'enregistrement du contact du service API
-                    await apiService.createContact(contactData);
+                    const data = {
+                    merchantData: merchantData,
+                    contactData: contactData,
+        };
+
+                // Appelez la fonction d'enregistrement du marchand du service API en passant les données complètes
+                const newMerchant = await apiService.registerMerchant(data);
+        
+
 
                     // Traitement des étapes suivantes après l'enregistrement réussi (par exemple, afficher un message de succès)
                 } catch (error) {
-                    console.error(error); // Traitez les erreurs ici (par exemple, afficher un message d'erreur)
+                    console.error(error);
                 }
             },
         },
     };
-</script> -->
+</script>
 
 <style>
     /* Votre code CSS ici */

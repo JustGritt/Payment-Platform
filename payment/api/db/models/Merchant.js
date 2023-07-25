@@ -13,11 +13,11 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      kbis: {
+      email: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      contactInfo: {
+      kbis: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -26,10 +26,6 @@ module.exports = function (connection) {
         allowNull: false,
       },
       redirectUrlCancellation: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      currency: {
         type: DataTypes.STRING,
         allowNull: false,
       },

@@ -1,6 +1,6 @@
 const { Router } = require("express");
 
-module.exports = function (userService, merchantService) {
+module.exports = function (userService, merchantService, contactService) {
   const router = Router();
 
   router.post("/login", async function (req, res) {
@@ -18,24 +18,34 @@ module.exports = function (userService, merchantService) {
 
   router.post("/register", async function (req, res) {
     try {
+      console.log(req.body)
       // Récupérer les données du formulaire d'inscription du marchand depuis le corps de la requête
       const {
         name,
+        email,
         kbis,
-        contactInfo,
         redirectUrlConfirmation,
         redirectUrlCancellation,
-        currency,
       } = req.body;
 
       // Créer un nouvel enregistrement pour le marchand dans la base de données
       const newMerchant = await merchantService.create({
         name,
         kbis,
-        contactInfo,
+        email,
         redirectUrlConfirmation,
         redirectUrlCancellation,
-        currency,
+      });
+
+      const newContact = await contactService.create({
+        firstname,
+        phone,
+        address,
+        postal_code,
+        city,
+        lastname,
+        title,
+        email,
       });
 
       // Répondre avec le nouveau marchand créé

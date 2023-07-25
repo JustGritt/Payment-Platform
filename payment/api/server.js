@@ -30,8 +30,8 @@ app.use(cookieParser());
 // TODO: Add env variable to enable/disable rate limiter
 //app.use(rateLimiter.rateLimiter);
 
-
-app.use(require("./routes/security")(userService, merchantService));
+const contactService = require("./services/contact")
+app.use(require("./routes/security")(userService, merchantService, contactService));
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
 app.get("/", (req, res) => {
