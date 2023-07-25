@@ -25,7 +25,7 @@ services:
     container_name: vuejs-front
 
   merchant-ui:
-    image: popokola/merchant-ui:latest 
+    image: popokola/merchant-front:latest 
     ports:
       - "${MERCHANT_PORT:-9393}:${MERCHANT_PORT:-9393}" 
     container_name: vuejs-merchant
