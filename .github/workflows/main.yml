@@ -45,7 +45,6 @@ jobs:
           context: ./payment/api
           file: ./payment/api/Dockerfile
           push: true
-          target: payment-api
           tags: popokola/payment-api:latest
 
   build_payment_front:
@@ -67,7 +66,6 @@ jobs:
           context: ./payment/front
           file: ./payment/front/Dockerfile
           push: true
-          target: payment-front
           tags: popokola/payment-front:latest
   
   build_merchant_front:
@@ -89,7 +87,6 @@ jobs:
           context: ./merchant/front
           file: ./merchant/front/Dockerfile
           push: true
-          target: merchant-front
           tags: popokola/merchant-front:latest
 
   deploy_to_serv:
