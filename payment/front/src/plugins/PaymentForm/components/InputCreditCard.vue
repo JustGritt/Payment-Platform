@@ -8,7 +8,7 @@ const props = defineProps({
 <template>
     <div class="form-group">
         <label class="little-label">Card number
-            <input :oninput="validateCardNumber"
+            <input ref="cardNumber" :oninput="validateCardNumber"
                 :class="['form-control', (cardErrors?.cardNumber) ? 'error-payment-card' : '']"
                 v-cardformat:formatCardNumber v-model="cardCvc" :data-error="(cardErrors?.cardNumber) ? true : false"
                 placeholder="#### #### #### ####" type="tel"></label>
@@ -18,15 +18,15 @@ const props = defineProps({
     </div>
     <div class="expiration">
         <label class="little-label">Expiry</label>
-        <input :class="[(cardErrors?.cardExpiry) ? 'error-payment-card' : '']" :oninput="validateCardExpiry"
-            v-cardformat:formatCardExpiry>
+        <input ref="cardExpiry" :class="[(cardErrors?.cardExpiry) ? 'error-payment-card' : '']"
+            :oninput="validateCardExpiry" v-cardformat:formatCardExpiry>
         <div class="error" v-if="cardErrors.cardExpiry">
             <small class="error-text-payment">{{ cardErrors.cardExpiry }}</small>
         </div>
     </div>
     <div class="cvc">
         <label class="little-label">Card CVC</label>
-        <input :class="[(cardErrors?.cardCvc) ? 'error-payment-card' : '']" :oninput="validateCardCVC"
+        <input ref="cardCvc" :class="[(cardErrors?.cardCvc) ? 'error-payment-card' : '']" :oninput="validateCardCVC"
             v-cardformat:formatCardCVC>
         <div class="error" v-if="cardErrors.cardCvc">
             <small class="error-text-payment">{{ cardErrors.cardCvc }}</small>
@@ -131,6 +131,23 @@ export default {
         cardExpiry: function (val) {
             if (this.$cardFormat.validateCardExpiry(val)) {
                 this.$refs.cardCvcInput.focus();
+            }
+        },
+        inputCreditCard: function (val) {
+
+        },
+        cardErrors: function (val) {
+            switch (val) {
+                case 'cardNumber':
+                    this.$refs.cardNumInput.class = 'error-payment-card';
+                    this.cardErrors.cardCvc = "Invalid CVC.";
+                    break;
+                case 'cardExpiry':
+                    this.$refs.cardExpInput.focus();
+                    break;
+                case 'cardCvc':
+                    this.$refs.cardCvcInput.focus();
+                    break;
             }
         }
     },
