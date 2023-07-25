@@ -13,19 +13,26 @@ services:
       - ./payment/pgdata:/var/lib/postgresql/data
 
   payment-server:
-    image: popokola/payment-server:lates
+    image: popokola/payment-api:latest
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_URl=${REDIS_URl}
+      - REDIS_TOKEN=${REDIS_TOKEN}
     ports:
       - "${BACK_PORT:-3000}:${BACK_PORT:-3000}" 
     container_name: node-api
 
   vue-ui:
-    image: popokola/vue-ui:latest
+    image: popokola/payment-front:latest
+    environment:
+      - BASE_URL=${BASE_URL}
     ports:
       - "${FRONT_PORT:-80}:${FRONT_PORT:-80}"  # Use 80 as default if FRONT_PORT is not set
     container_name: vuejs-front
 
   merchant-ui:
-    image: popokola/merchant-ui:latest 
+    image: popokola/merchant-front:latest 
     ports:
       - "${MERCHANT_PORT:-9393}:${MERCHANT_PORT:-9393}" 
     container_name: vuejs-merchant

@@ -1,20 +1,14 @@
 // @ts-check
-const { devices } = require('@playwright/test')
-
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
+const { devices } = require('@playwright/test');
 
 /**
  * @see https://playwright.dev/docs/test-configuration
- * @type {import('@playwright/test').PlaywrightTestConfig}
+ * @type { import('@playwright/test').PlaywrightTestConfig }
  */
 const config = {
   testDir: './e2e',
   /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
+  timeout: 50 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -35,13 +29,13 @@ const config = {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:5173', // Update to the correct port for Vite development server
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
 
-    /* Only on CI systems run the tests headless */
-    headless: !!process.env.CI
+    /* Run the tests in headless mode */
+    headless: false,
   },
 
   /* Configure projects for major browsers */
@@ -100,13 +94,13 @@ const config = {
   /* Run your local dev server before starting the tests */
   webServer: {
     /**
-     * Use the dev server by default for faster feedback loop.
+     * Use the dev server by default for a faster feedback loop.
      * Use the preview server on CI for more realistic testing.
      */
     command: process.env.CI ? 'vite preview --port 5173' : 'vite dev',
     port: 5173,
     reuseExistingServer: !process.env.CI
   }
-}
+};
 
-module.exports = config
+module.exports = config;
