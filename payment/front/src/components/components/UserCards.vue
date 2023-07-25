@@ -2,22 +2,17 @@
 import { defineProps } from "vue";
 const { name, role } = defineProps(["name", "role"]);
 
-import { impersonate, updateTokenJWT } from "@/contexts/User.js";
+import { impersonate } from "@/contexts/User.js";
 
 async function impersonateUser() {
-    // Call the impersonate function to update the userState in the context
     impersonate(name, role);
 
-    // Prepare the updated user profile data to pass to updateTokenJWT
     const userProfileData = {
         user: name,
         role: role,
     };
 
     console.log(userProfileData);
-
-    // Create a new JWT token with the updated user profile data
-    const token = await updateTokenJWT(userProfileData);
 }
 </script>
 
@@ -29,7 +24,7 @@ async function impersonateUser() {
                 alt="Image de profil"
             />
             <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">{{ name }}</h5>
-            <span class="text-sm text-gray-500 dark:text-gray-400">{{ role }}</span>
+            <span class="text-sm text-gray-500 dark:text-gray-400 capitalize">{{ role }}</span>
 
             <div class="flex mt-6 space-x-3 md:mt-6">
                 <button
