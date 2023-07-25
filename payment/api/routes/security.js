@@ -1,15 +1,20 @@
 const { Router } = require("express");
 
-module.exports = function (userService, merchantService, contactService) {
+module.exports = function (userService, merchantService) {
   const router = Router();
 
   router.post("/login", async function (req, res) {
     const { email, password } = req.body;
-    const [user] = await userService.findAll({ email });
+    const [user] = await merchantService.findAll({ email });
+    console.log(user)
     if (!user) {
       return res.sendStatus(401);
     }
     if (!user.checkPassword(password)) {
+      return res.sendStatus(401);
+    }
+
+    if (user.isvalid == 0) {
       return res.sendStatus(401);
     }
 
@@ -20,34 +25,30 @@ module.exports = function (userService, merchantService, contactService) {
     try {
       console.log(req.body)
       // Récupérer les données du formulaire d'inscription du marchand depuis le corps de la requête
-      const {
-        name,
-        email,
-        kbis,
-        redirectUrlConfirmation,
-        redirectUrlCancellation,
-      } = req.body;
+      const { merchantData, contactData } = req.body;
 
       // Créer un nouvel enregistrement pour le marchand dans la base de données
       const newMerchant = await merchantService.create({
-        name,
-        kbis,
-        email,
-        redirectUrlConfirmation,
-        redirectUrlCancellation,
+        name: merchantData.name,
+        kbis: merchantData.kbis,
+        email: merchantData.email,
+        redirectUrlConfirmation: merchantData.redirectUrlConfirmation,
+        redirectUrlCancellation: merchantData.redirectUrlCancellation,
+        password: merchantData.password,
+        isvalid: 0, // Le marchand n'est pas encore validé
       });
 
+      const contactService = require("../services/contact")
       const newContact = await contactService.create({
-        firstname,
-        phone,
-        address,
-        postal_code,
-        city,
-        lastname,
-        title,
-        email,
+        firstname: contactData.firstname,
+        phone: contactData.phone,
+        address: contactData.address,
+        postal_code: contactData.postal_code,
+        city: contactData.city,
+        lastname: contactData.lastname,
+        title: contactData.title,
+        email: contactData.email,
       });
-
       // Répondre avec le nouveau marchand créé
       res.status(201).json(newMerchant);
     } catch (error) {

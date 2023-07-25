@@ -10,10 +10,10 @@ const apiClient = axios.create({
 
 export default {
   // Ajoutez ici les fonctions pour appeler les différentes routes de votre API
-  registerMerchant: async (merchantData, contactData) => {
+  registerMerchant: async (data) => {
     try {
-      console.log(merchantData, contactData)
-      const response = await apiClient.post("/register", merchantData, contactData);
+      console.log(data)
+      const response = await apiClient.post("/register", data);
       return response.data;
     } catch (error) {
       throw error;

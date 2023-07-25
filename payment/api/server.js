@@ -31,7 +31,7 @@ app.use(cookieParser());
 //app.use(rateLimiter.rateLimiter);
 
 const contactService = require("./services/contact")
-app.use(require("./routes/security")(userService, merchantService, contactService));
+app.use(require("./routes/security")(userService, merchantService));
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
 app.get("/", (req, res) => {
