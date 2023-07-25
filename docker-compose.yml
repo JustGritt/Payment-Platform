@@ -28,7 +28,9 @@ services:
       context: ./payment/front
       dockerfile: Dockerfile
     ports:
-      - "${FRONT_PORT}:${FRONT_PORT}" 
+      - "${FRONT_PORT}:${FRONT_PORT}"
+    environment:
+      - "${BASE_URL}:${BASE_URL}" 
     container_name: vuejs-front
     volumes:
       - ./payment/front:/usr/src/app/payment/front
