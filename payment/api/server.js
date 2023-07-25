@@ -6,7 +6,8 @@ const GenericController = require("./controllers/genericCRUD");
 const userService = require("./services/user");
 const errorHandler = require("./middlewares/errorHandler");
 const cookieParser = require("cookie-parser");
-const rateLimiter = require("./middlewares/rateLimiter");
+const merchantService = require("./services/merchant");
+//const rateLimiter = require("./middlewares/rateLimiter");
 const cors = require("cors");
 const port = process.env.PORT || 3000;
 const { authentificationGuard } = require("./middlewares/authentificationGuard");
@@ -29,10 +30,10 @@ app.use(cookieParser());
 // TODO: Add env variable to enable/disable rate limiter
 //app.use(rateLimiter.rateLimiter);
 
-app.use(require("./routes/security")(userService));
+
+app.use(require("./routes/security")(userService, merchantService));
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
-
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
