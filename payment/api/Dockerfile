@@ -1,13 +1,19 @@
 FROM node:18
 
-WORKDIR /usr/src/app/payment/api
+# Set the working directory inside the container
+WORKDIR /app/payment/api
 
+# Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
+# Install app dependencies
 RUN npm install
 
+# Copy the rest of the application code to the container
 COPY . .
 
-EXPOSE 3000
+# Expose the port your app listens on
+ENV PORT=${PORT:-3000}
 
-CMD ["npm", "run", "dev"]
+# Define the command to start your Node.js app
+CMD ["node", "server.js"]

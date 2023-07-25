@@ -4,7 +4,7 @@ const { Ratelimit } = require('@upstash/ratelimit');
 let redis;
 let ratelimit;
 
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV === 'production') {
   redis = new Redis({
     url: process.env.REDIS_URL,
     token: process.env.REDIS_TOKEN,

@@ -17,6 +17,12 @@ payment/front/dist
 merchant/front/node_modules
 merchant/front/dist
 
+# merchant API directory
+merchant/api/node_modules
+merchant/api/dist
+merchant/api/.env
+merchant/db.sqlite
+
 # local env files
 .env.local
 .env.*.local
