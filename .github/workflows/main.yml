@@ -102,7 +102,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y sshpass
       - name: Copy docker-compose.prod.yml to the server
         run: |
-        sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no docker-compose.prod.yml ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/app/
+          sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no docker-compose.prod.yml ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/app/
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
@@ -111,7 +111,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-          docker-compose down --remove-orphans
-          docker-compose -f /home/app/docker-compose.prod.yml up -d --build
+            docker-compose down --remove-orphans
+            docker-compose -f /home/app/docker-compose.prod.yml up -d --build
 
           
