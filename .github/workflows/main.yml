@@ -95,6 +95,11 @@ jobs:
     steps:
       - name: Deploy to server
         uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
       - name: Install SSHpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
       - name: Copy docker-compose.prod.yml to the server
