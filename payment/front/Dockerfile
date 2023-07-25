@@ -19,6 +19,9 @@ RUN npm run build
 # Use a lightweight web server to serve the built app
 FROM nginx:alpine
 
+# Copy the custom Nginx configuration to the container
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Copy the built app from the previous stage to the nginx server
 COPY --from=builder /app/payment/client/dist /usr/share/nginx/html
 
