@@ -14,6 +14,11 @@ services:
 
   payment-server:
     image: popokola/payment-api:latest
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_URl=${REDIS_URl}
+      - REDIS_TOKEN=${REDIS_TOKEN}
     ports:
       - "${BACK_PORT:-3000}:${BACK_PORT:-3000}" 
     container_name: node-api
