@@ -17,20 +17,15 @@ module.exports = function (connection) {
             Merchant.hasOne(models.Currency, {
                 foreignKey: "currency_id",
             });
+            Merchant.hasMany(models.Contact, { foreignKey: "merchant_idmerchant" });
         }
     }
 
     Merchant.init({
-        merchant_id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
         },
-        name: DataTypes.STRING,
-        kbis: DataTypes.STRING,
-        redirect_success: DataTypes.STRING,
-        redirect_cancel: DataTypes.STRING,
-        currency_id: DataTypes.INTEGER,
         email: {
             type: DataTypes.STRING,
             unique: true,
@@ -56,6 +51,45 @@ module.exports = function (connection) {
                 },
             },
         },
+        kbis: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        phone: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        address: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        postal_code: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        city: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        redirectUrlConfirmation: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        redirectUrlCancellation: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        isvalid: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+        },
+        merchant_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        currency_id: DataTypes.INTEGER,
         is_active: DataTypes.BOOLEAN,
         client_token: {
             type: DataTypes.STRING,
@@ -73,10 +107,15 @@ module.exports = function (connection) {
                 beforeCreate: async (client, options) => {
                     const bcrypt = require("bcryptjs");
                     const salt = await bcrypt.genSalt(7);
+
+                    const salt_password = await bcrypt.genSalt(10);
+                    const hash = await bcrypt.hash(client.password, salt_password);
+
                     const hash_client_token = await bcrypt.hash(UUIDV4.toString(), salt);
                     const hash_client_secret = await bcrypt.hash(UUIDV4.toString(), salt);
                     client.client_token = hash_client_token;
                     client.client_secret = hash_client_secret;
+                    client.password = hash;
                 },
                 beforeSave: async (client, options) => {
                     if (client.changed("password")) {
@@ -88,6 +127,5 @@ module.exports = function (connection) {
                 },
             },
         });
-
     return Merchant;
 };

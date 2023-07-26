@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { Model } = require("sequelize");
 const Sequelize = require("sequelize");
 let connection;
   
@@ -18,5 +19,11 @@ fs.readdirSync(path.join(__dirname, "models")).forEach((file) => {
   console.log(model.name, model.prototype.constructor.name);
   db[model.name] = model;
 });
+
+for(let modelName in db) {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+}
 
 module.exports = db;

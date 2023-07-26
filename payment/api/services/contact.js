@@ -1,34 +1,21 @@
 const { Sequelize } = require("sequelize");
-const { Merchant } = require("../db"); // Assuming the Merchant model is defined in "../db"
+const { Contact } = require("../db");
 const ValidationError = require("../errors/ValidationError");
 
 module.exports = {
   findAll: async function (criteria, options = {}) {
-    return Merchant.findAll({
+    return Contact.findAll({
       where: criteria,
       ...options,
       order: Object.entries(options.order || {}),
     });
   },
   findById: async function (id) {
-    return Merchant.findByPk(id);
-  },
-  login: async function (data) {
-    try {
-      const merchant = await Merchant.findOne({ where: { email: data.email } });
-      if (!merchant) throw new ValidationError("Invalid email or password");
-      if (!merchant.checkPassword(data.password)) throw new ValidationError("Invalid email or password");
-      return { merchant, token: user.generateToken() };
-    } catch (e) {
-      if (e instanceof Sequelize.ValidationError) {
-        throw ValidationError.createFromSequelizeValidationError(e);
-      }
-      throw e;
-    }
+    return Contact.findByPk(id);
   },
   create: async function (data) {
     try {
-      return await Merchant.create(data);
+      return await Contact.create(data);
     } catch (e) {
       if (e instanceof Sequelize.ValidationError) {
         throw ValidationError.createFromSequelizeValidationError(e);
@@ -38,12 +25,13 @@ module.exports = {
   },
   update: async function (criteria, data) {
     try {
-      const [nb, merchants = []] = await Merchant.update(data, {
+      const [nb, contacts = []] = await Contact.update(data, {
         where: criteria,
         returning: true,
         individualHooks: true,
       });
-      return merchants;
+      console.log(nb, contacts);
+      return contacts;
     } catch (e) {
       if (e instanceof Sequelize.ValidationError) {
         throw ValidationError.createFromSequelizeValidationError(e);
@@ -52,7 +40,7 @@ module.exports = {
     }
   },
   remove: async function (criteria) {
-    return Merchant.destroy({
+    return Contact.destroy({
       where: criteria,
     });
   },
