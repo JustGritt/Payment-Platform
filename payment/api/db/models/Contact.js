@@ -13,22 +13,6 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      phone: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      address: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      postal_code: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      city: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
       lastname: {
         type: DataTypes.STRING,
         allowNull: false,

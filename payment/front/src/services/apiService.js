@@ -19,4 +19,13 @@ export default {
       throw error;
     }
   },
+
+  login: async (email, password) => {
+    try {
+      const response = await apiClient.post("/login", { email, password });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 };

@@ -5,11 +5,16 @@ module.exports = function (userService, merchantService, contactService) {
 
   router.post("/login", async function (req, res) {
     const { email, password } = req.body;
-    const [user] = await userService.findAll({ email });
+    const [user] = await merchantService.findAll({ email });
+    console.log(user)
     if (!user) {
       return res.sendStatus(401);
     }
     if (!user.checkPassword(password)) {
+      return res.sendStatus(401);
+    }
+
+    if (user.isvalid == 0) {
       return res.sendStatus(401);
     }
 
