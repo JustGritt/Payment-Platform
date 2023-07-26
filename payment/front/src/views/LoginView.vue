@@ -64,7 +64,6 @@ const handleSubmit = (event) => {
     .catch((error) => {
       console.log(error);
     });
-
 };
 </script>
   
