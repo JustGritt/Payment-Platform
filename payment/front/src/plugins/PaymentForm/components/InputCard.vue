@@ -6,7 +6,6 @@ const props = defineProps({
 
 const selected = ref(props.context.node.value)
 
-
 function handleInput(val) {
     if (!val.attrs?.disabled) {
         selected.value = val.value
@@ -28,7 +27,7 @@ function handleInput(val) {
     </div>
 </template>
 
-<style>
+<style scoped>
 /* input[type=checkbox].hidden {
         display: none;
     } */

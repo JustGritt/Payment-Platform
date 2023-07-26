@@ -1,19 +1,49 @@
 const { Router } = require("express");
+const ValidationError = require("../errors/ValidationError");
+const Joi = require("joi");
 
-module.exports = function (userService) {
+module.exports = function ( merchantService, contactService) {
   const router = Router();
 
   router.post("/login", async function (req, res) {
     const { email, password } = req.body;
-    const [user] = await userService.findAll({ email });
-    if (!user) {
-      return res.sendStatus(401);
-    }
-    if (!user.checkPassword(password)) {
-      return res.sendStatus(401);
-    }
 
-    res.json({ token: user.generateToken() });
+    try {
+      const loginValidation = Joi.object({
+        email: Joi.string().email().required().messages({ "*": "Email is required" }),
+        password: Joi.string().required().messages({ "*": "Password is required" }),
+      })
+      const { error } = loginValidation.validate(req.body)
+      if (error) throw new ValidationError(error);
+      const { merchant, token } = await merchantService.login({ email, password });
+      if (!merchant.isvalid) {
+        return res.sendStatus(401);
+      }
+      return res.json({ user: merchant, token });
+    } catch (err) {
+      console.log(err);
+      res.status(401).json({ message: (err.errors && typeof err.errors === 'string') ? err.errors : (err.error?.details && Array.isArray(err.error.details)) ? err.errors.details[0].message : err.message });
+    }
+  });
+
+  router.post("/register", async function (req, res) {
+    try {
+      console.log(req.body)
+      // Récupérer les données du formulaire d'inscription du marchand depuis le corps de la requête
+
+      // Créer un nouvel enregistrement pour le marchand dans la base de données
+      const newMerchant = await merchantService.create(req.body.merchantData);
+      await contactService.create({...req.body.contactData, merchant_id: newMerchant.merchant_id});
+
+      // Répondre avec le nouveau marchand créé
+      res.status(201).json(newMerchant);
+    } catch (error) {
+      // Gérer les erreurs
+      console.error(error);
+      res.status(500).json({
+        error: "Une erreur est survenue lors de l'enregistrement du marchand.",
+      });
+    }
   });
 
   return router;
