@@ -20,9 +20,10 @@ export default {
     }
   },
 
-  login: async (email, password) => {
+  login: async (data) => {
     try {
-      const response = await apiClient.post("/login", { email, password });
+      console.log(data);
+      const response = await apiClient.post("/login", JSON.stringify(data));
       return response.data;
     } catch (error) {
       throw error;
