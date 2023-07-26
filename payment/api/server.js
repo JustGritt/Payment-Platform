@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.get("/health", authentificationGuard({JWT: true, BasicAu: true}), (req, res) => {
+app.get("/health", authentificationGuard({ BasicAuth: true}), (req, res) => {
   res.sendStatus(200);
 });
 
