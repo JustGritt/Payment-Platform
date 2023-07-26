@@ -24,7 +24,7 @@ export default {
     try {
       console.log(data);
       const response = await apiClient.post("/login", JSON.stringify(data));
-      return response.data;
+      return response;
     } catch (error) {
       throw error;
     }

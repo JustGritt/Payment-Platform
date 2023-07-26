@@ -5,7 +5,7 @@ import SideBar from './components/components/SideBar.vue';
 import { userState } from './contexts/User.js';
 
 
-const isLoggedIn = userState.isLoggedIn;
+const isLoggedIn = userState.user;
 </script>
 
 <template>

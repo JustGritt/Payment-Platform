@@ -18,7 +18,7 @@ module.exports = {
       const merchant = await Merchant.findOne({ where: { email: data.email } });
       if (!merchant) throw new ValidationError("Invalid email or password");
       if (!merchant.checkPassword(data.password)) throw new ValidationError("Invalid email or password");
-      return { merchant, token: user.generateToken() };
+      return { merchant, token: merchant.generateToken() };
     } catch (e) {
       if (e instanceof Sequelize.ValidationError) {
         throw ValidationError.createFromSequelizeValidationError(e);

@@ -45,8 +45,8 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   // If the route requires authentication and the user is not logged in, redirect to the login page
-  if (requiresAuth && !userState.isLoggedIn) {
-    next({ name: 'Login' }); // Update 'Login' to the name of your login route
+  if (requiresAuth && !userState.user) {
+    next({ name: 'login' }); // Update 'Login' to the name of your login route
   } else {
     // Otherwise, allow access to the route
     next();
