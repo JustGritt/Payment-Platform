@@ -44,10 +44,6 @@ module.exports = function (connection) {
           isEmail: true,
         },
       },
-      isvalid: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
     },
     {
       sequelize: connection,

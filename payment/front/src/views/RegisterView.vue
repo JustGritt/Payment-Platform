@@ -249,8 +249,8 @@
                     contactData: contactData,
         };
 
-                // Appelez la fonction d'enregistrement du marchand du service API en passant les données complètes
-                const newMerchant = await apiService.registerMerchant(data);
+        // Appelez la fonction d'enregistrement du marchand du service API en passant les données complètes
+        const newMerchant = await apiService.registerMerchant(data);
         
 
 

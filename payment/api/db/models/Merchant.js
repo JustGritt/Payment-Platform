@@ -29,6 +29,11 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      isValid: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
     },
     {
       sequelize: connection,
