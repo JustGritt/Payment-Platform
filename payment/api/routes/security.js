@@ -33,9 +33,7 @@ module.exports = function ( merchantService, contactService) {
 
       // Créer un nouvel enregistrement pour le marchand dans la base de données
       const newMerchant = await merchantService.create(req.body.merchantData);
-
-      const newContact = await contactService.create({...req.body.contactData, merchant_idmerchant: newMerchant.id});
-      console.log(newContact)
+      await contactService.create({...req.body.contactData, merchant_id: newMerchant.merchant_id});
 
       // Répondre avec le nouveau marchand créé
       res.status(201).json(newMerchant);

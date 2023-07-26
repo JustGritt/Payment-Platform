@@ -3,7 +3,7 @@ const { Model, DataTypes } = require("sequelize");
 module.exports = function (connection) {
   class Contact extends Model {
     static associate(models) {
-        Contact.belongsTo(models.Merchant, { foreignKey: "merchant_idmerchant" });
+        Contact.belongsTo(models.Merchant, { foreignKey: "merchant_id" });
     }
   }
 
