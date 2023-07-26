@@ -1,19 +1,7 @@
 const { Model, DataTypes } = require("sequelize");
 
 module.exports = function (connection) {
-    class Client extends Model {
-        async checkPassword(password) {
-            const bcrypt = require("bcryptjs");
-            return bcrypt.compare(password, this.password);
-        }
-
-        generateToken() {
-            const jwt = require("jsonwebtoken");
-            return jwt.sign({ id: this.id }, process.env.JWT_SECRET, {
-                expiresIn: "1y",
-            });
-        }
-    }
+    class Client extends Model {}
 
     Client.init({
         client_id: {
@@ -21,10 +9,26 @@ module.exports = function (connection) {
             primaryKey: true,
             autoIncrement: true,
         },
-        firstname: DataTypes.STRING,
-        lastname: DataTypes.STRING,
-        phone_number: DataTypes.STRING,
-        address: DataTypes.STRING,
+        firstname: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        lastname: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        phone_number: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        address: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        address2: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         email: {
             type: DataTypes.STRING,
             unique: true,
@@ -35,36 +39,13 @@ module.exports = function (connection) {
                     msg: "Email cannot be null",
                 },
             },
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                len: {
-                    args: [8],
-                    msg: "Password must be at least 8 characters long",
-                },
-                is: {
-                    args: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
-                    msg: "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character",
-                },
-            },
-        },
+        }
     },
-    {
-        sequelize: connection,
-        tableName: "clients",
-        hooks: {
-            beforeSave: async (client, options) => {
-                if (client.changed("password")) {
-                    const bcrypt = require("bcryptjs");
-                    const salt = await bcrypt.genSalt(10);
-                    const hash = await bcrypt.hash(client.password, salt);
-                    client.password = hash;
-                }
-            },
-        },
-    });
+        {
+            sequelize: connection,
+            tableName: "clients",
+            hooks: {},
+        });
 
     return Client;
 };

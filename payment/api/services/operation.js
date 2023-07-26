@@ -1,5 +1,6 @@
 const { Sequelize } = require("sequelize");
 const { Operation } = require("../db"); // Assuming the Operation model is defined in "../db"
+const valid = require("card-validator");
 const ValidationError = require("../errors/ValidationError");
 
 module.exports = {
@@ -14,7 +15,23 @@ module.exports = {
     return Operation.findByPk(id);
   },
   create: async function (data) {
+    function checkCardNumber(value) {
+      const numberValidation = valid.number(value);
+      return numberValidation.isValid
+    }
+
+    function maskCard(num) {
+      return `${num.substr(0, 4)}${'*'.repeat(num.length - 8)}${num.substr(num.length - 4)}`;
+    }
+
     try {
+      if (!data.card_number)
+        throw new ValidationError("You have to provide a valid card number");
+      if (!data.card_expiry_date)
+        throw new ValidationError("You have to provide a valid card expiry date");
+      if (!checkCardNumber(data.card_number))
+        throw new ValidationError("Invalid card number");
+      data.card_number = maskCard(data.card_number)
       return await Operation.create(data);
     } catch (e) {
       if (e instanceof Sequelize.ValidationError) {

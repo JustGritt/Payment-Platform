@@ -1,64 +1,81 @@
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes, UUID, UUIDV4 } = require("sequelize");
 
 module.exports = function (connection) {
-    const Transaction = connection.define(
-        "Transaction",
-        {
-            transaction_id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
-            },
-            operation_id: DataTypes.INTEGER,
-            currency_id: DataTypes.INTEGER,
-            client_id: DataTypes.INTEGER,
-            // merchant_id: DataTypes.INTEGER, // TODO: Add later
+    class Transaction extends Model {
+        static associate(models) {
+            Transaction.belongsTo(models.Merchant, {
+                foreignKey: "merchant_id",
+            });
 
-            transaction_amount: DataTypes.FLOAT,
-            transaction_date: DataTypes.DATE,
-            transaction_uid: {
-                type: DataTypes.STRING,
-                unique: true,
-                allowNull: false,
-                validate: {
-                    notEmpty: {
-                        msg: "You have to provide a valid token",
-                    },
-                },
-            },
-            creditCard: {
-                type: DataTypes.STRING,
-                unique: true,
-                allowNull: false,
-                validate: {
-                    notEmpty: {
-                        msg: "You have to provide a valid credit card number",
-                    },
-                },
-            },
-            creditCardExpiryDate: DataTypes.DATE,
-            // external_reference: DataTypes.STRING, // TODO: Add later if needed
+            Transaction.hasOne(models.Client, {
+                foreignKey: "client_id",
+            });
+
+            Transaction.hasOne(models.Currency, {
+                foreignKey: "currency_id",
+            });
+
+            Transaction.hasMany(models.Operation, {
+                foreignKey: "operation_id",
+            });
+
+            Transaction.hasOne(models.TransactionState, {
+                foreignKey: "transaction_state",
+            });
+        }
+    }
+    Transaction.init({
+        transaction_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
         },
+        operation_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        currency_id: DataTypes.INTEGER,
+        client_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        merchant_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        transaction_amount: DataTypes.FLOAT,
+        transaction_state: DataTypes.INTEGER,
+        transaction_date: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+        },
+        transaction_uid: {
+            type: UUID,
+            defaultValue: UUIDV4,
+            unique: true,
+            allowNull: false,
+        },
+        // external_reference: DataTypes.STRING, // TODO: Add later if needed
+    },
         {
             sequelize: connection,
             tableName: "transactions",
         }
     );
 
-    // Define associations here if necessary
-    Transaction.belongsTo(connection.models.Client, {
-        foreignKey: "client_id",
-    });
-
-    Transaction.belongsTo(connection.models.Currency, {
-        foreignKey: "currency_id",
-    });
-
-    Transaction.belongsTo(connection.models.Operation, {
-        foreignKey: "operation_id",
-    });
-
     // Add hook to update the transaction state
+    Transaction.addHook("beforeCreate", async (transaction, options) => {
+        const TransactionState = connection.models.TransactionState;
+        const transaction_state = await TransactionState.findOne({
+            where: {
+                name: "capture",
+            }
+        });
+        if (transaction_state) {
+            transaction.transaction_state = transaction_state.dataValues.transaction_id;
+        }
+    })
     Transaction.addHook("afterCreate", async (transaction, options) => {
         const Operation = connection.models.Operation;
 

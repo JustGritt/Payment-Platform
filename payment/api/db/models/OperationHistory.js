@@ -1,8 +1,19 @@
-const { DataTypes } = require("sequelize");
+const {Model, DataTypes } = require("sequelize");
 
 module.exports = function (connection) {
-    const OperationHistory = connection.define(
-        "OperationHistory",
+    class OperationHistory extends Model {
+        static associate(models) {
+            OperationHistory.belongsTo(models.Operation, {
+                foreignKey: "operation_id",
+            });
+
+            OperationHistory.belongsTo(models.Transaction, {
+                foreignKey: "transaction_id",
+            });
+        }
+    }
+
+    OperationHistory.init(
         {
             history_id: {
                 type: DataTypes.INTEGER,
@@ -18,15 +29,6 @@ module.exports = function (connection) {
             tableName: "operation_history", // Correct table name
         }
     );
-
-    // Define associations here if necessary
-    OperationHistory.belongsTo(connection.models.Operation, {
-        foreignKey: "operation_id",
-    });
-
-    OperationHistory.belongsTo(connection.models.Transaction, {
-        foreignKey: "transaction_id",
-    });
 
     // Add hook to update the operation_date
     OperationHistory.addHook("beforeCreate", (history, options) => {
