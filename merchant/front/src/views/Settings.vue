@@ -1,3 +1,1 @@
-<template>
-    My Settings
-</template>
+<template>My Settings</template>

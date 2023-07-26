@@ -4,6 +4,7 @@ const app = express();
 const GenericRouter = require("./routes/genericCRUD");
 const GenericController = require("./controllers/genericCRUD");
 const userService = require("./services/user");
+const transactionService = require("./services/transaction");
 const errorHandler = require("./middlewares/errorHandler");
 const cookieParser = require("cookie-parser");
 const merchantService = require("./services/merchant");
@@ -11,7 +12,6 @@ const merchantService = require("./services/merchant");
 const cors = require("cors");
 const port = process.env.PORT || 3000;
 const { authentificationGuard } = require("./middlewares/authentificationGuard");
-
 
 app.use(cors());
 app.use(function (req, res, next) {
@@ -25,8 +25,6 @@ app.use(function (req, res, next) {
 app.use(express.json());
 app.use(cookieParser());
 
-
-
 // TODO: Add env variable to enable/disable rate limiter
 //app.use(rateLimiter.rateLimiter);
 
@@ -34,6 +32,13 @@ const contactService = require("./services/contact")
 app.use(require("./routes/security")(userService, merchantService));
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
+<<<<<<< HEAD
+||||||| parent of 29de7f0 (✨ Add Auth & Orders view in Merchant)
+
+=======
+app.use("/transactions", new GenericRouter(new GenericController(transactionService)));
+
+>>>>>>> 29de7f0 (✨ Add Auth & Orders view in Merchant)
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
@@ -43,7 +48,6 @@ app.get("/health", authentificationGuard, (req, res) => {
 });
 
 app.post('/convert', require('./controllers/currencyConverter').currencyConverterController);
-
 
 app.use(errorHandler);
 
