@@ -29,12 +29,21 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${FRONT_PORT}:${FRONT_PORT}"
-    environment:
-      - "${BASE_URL}:${BASE_URL}" 
     container_name: vuejs-front
     volumes:
       - ./payment/front:/usr/src/app/payment/front
       - /usr/src/app/payment/front/node_modules
+
+  psp-server:
+    build:
+      context: ./psp
+      dockerfile: Dockerfile
+    ports:
+      - "${PSP_PORT}:${PSP_PORT}" 
+    container_name: psp-server
+    volumes:
+      - ./psp:/usr/src/app/psp
+      - /usr/src/app/psp/node_modules
 
   merchant-ui:
     build:

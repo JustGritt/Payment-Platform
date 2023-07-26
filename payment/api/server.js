@@ -43,11 +43,69 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.get("/health", authentificationGuard({JWT: true, BasicAu: true}), (req, res) => {
+app.get("/health", authentificationGuard({ BasicAuth: true}), (req, res) => {
   res.sendStatus(200);
 });
 
 app.post('/convert', require('./controllers/currencyConverter').currencyConverterController);
+
+
+//TODO this route corresponds to operation
+app.post('/operations', (req, res) => {
+
+  console.log(req.body);
+
+  fetch(process.env.PSP_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req.body)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to send payment response');
+      }
+      console.log('Payment response sent successfully');
+    }
+    )
+    .catch(error => {
+      console.error('Error sending payment response:', error.message);
+    });
+    
+    //TODO: go find in db the confirmation url and send it back to the client
+    const CONFIRMATION_URL = 'http://localhost:3000/psp/confirmation';
+    res.redirect(303, CONFIRMATION_URL);
+});
+
+
+
+app.post('/psp/webhook', (req, res) => {
+  //TODO: update the operation status in db
+  //TODO: update the transaction status in db
+  //TODO: go find in db the transaction id and send it back to the client
+  //TODO: go find in db the merchant webhook url and send it back to the client
+  const MERCHANT_URL = 'http://localhost:3000/psp/merchant/webhook';
+  fetch(MERCHANT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req.body)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to send payment response');
+      }
+      console.log('Payment response sent successfully');
+    }
+    )
+    .catch(error => {
+      console.error('Error sending payment response:', error.message);
+    });
+  console.log(req.body);
+  res.sendStatus(200);
+});
 
 
 app.use(errorHandler);

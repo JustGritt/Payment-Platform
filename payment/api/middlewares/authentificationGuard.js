@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 exports.authentificationGuard = (options) => async function (req, res, next) {
-  if (options.JWT) {
+  if (options.JWTAuth) {
     const token = req.cookies.token;
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -19,14 +19,20 @@ exports.authentificationGuard = (options) => async function (req, res, next) {
       if (!authHeader) {
         return res.sendStatus(401); // Return early after sending the response
       }
+      console.log(authHeader);
       const encodedCredentials = authHeader.split(" ")[1];
       const decodedCredentials = Buffer.from(encodedCredentials, "base64").toString("ascii");
-      const [username, password] = decodedCredentials.split(":");
-      if (username === process.env.BASIC_AUTH_USERNAME && password === process.env.BASIC_AUTH_PASSWORD) {
-        return next();
-      } else {
+      const [clientId, clientToken] = decodedCredentials.split(":");
+      console.log(clientId, clientToken);
+
+      const merchantService = require("../services/merchant");
+      const merchant = await merchantService.findAll({ client_token: clientId, client_secret: clientToken });
+
+      if (!merchant) {
         return res.sendStatus(401); // Return early after sending the response
       }
+      req.user = merchant;
+      return next();
     } catch (err) {
       return res.sendStatus(401); // Return early after sending the response
     }
@@ -34,3 +40,7 @@ exports.authentificationGuard = (options) => async function (req, res, next) {
 
   return res.sendStatus(401); // If neither JWT nor BasicAuth options are specified, return 401
 };
+
+
+
+

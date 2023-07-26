@@ -92,12 +92,14 @@ module.exports = function (connection) {
         currency_id: DataTypes.INTEGER,
         is_active: DataTypes.BOOLEAN,
         client_token: {
-            type: DataTypes.STRING,
+            type: DataTypes.UUID,
             unique: true,
+            defaultValue: UUIDV4,
         },
         client_secret: {
-            type: DataTypes.STRING,
+            type: DataTypes.UUID,
             unique: true,
+            defaultValue: UUIDV4,
         }
     },
         {
@@ -106,15 +108,8 @@ module.exports = function (connection) {
             hooks: {
                 beforeCreate: async (client, options) => {
                     const bcrypt = require("bcryptjs");
-                    const salt = await bcrypt.genSalt(7);
-
                     const salt_password = await bcrypt.genSalt(10);
                     const hash = await bcrypt.hash(client.password, salt_password);
-
-                    const hash_client_token = await bcrypt.hash(UUIDV4.toString(), salt);
-                    const hash_client_secret = await bcrypt.hash(UUIDV4.toString(), salt);
-                    client.client_token = hash_client_token;
-                    client.client_secret = hash_client_secret;
                     client.password = hash;
                 },
                 beforeSave: async (client, options) => {
