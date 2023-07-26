@@ -22,7 +22,7 @@ module.exports = function ( merchantService, contactService) {
       return res.json({ user: merchant, token });
     } catch (err) {
       console.log(err);
-      res.status(401).json({ message: (err.errors && typeof err.errors === 'string') ? err.errors : (err.error.details && Array.isArray(err.error.details)) ? err.errors.details[0].message : err.message });
+      res.status(401).json({ message: (err.errors && typeof err.errors === 'string') ? err.errors : (err.error?.details && Array.isArray(err.error.details)) ? err.errors.details[0].message : err.message });
     }
   });
 

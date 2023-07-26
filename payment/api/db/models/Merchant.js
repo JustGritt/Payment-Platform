@@ -17,11 +17,16 @@ module.exports = function (connection) {
             Merchant.hasOne(models.Currency, {
                 foreignKey: "currency_id",
             });
-            Merchant.hasMany(models.Contact, { foreignKey: "merchant_idmerchant" });
+            Merchant.hasMany(models.Contact, { foreignKey: "merchant_id" });
         }
     }
 
     Merchant.init({
+        merchant_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
         name: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -46,7 +51,7 @@ module.exports = function (connection) {
                     msg: "Password must be at least 8 characters long",
                 },
                 is: {
-                    args: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
+                    args: /[a-z]/,
                     msg: "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character",
                 },
             },
@@ -83,11 +88,6 @@ module.exports = function (connection) {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
-        },
-        merchant_id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
         },
         currency_id: DataTypes.INTEGER,
         is_active: DataTypes.BOOLEAN,

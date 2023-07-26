@@ -9,7 +9,6 @@ const transactionService = require("./services/transaction");
 const operationService = require("./services/operation");
 const errorHandler = require("./middlewares/errorHandler");
 const cookieParser = require("cookie-parser");
-const merchantService = require("./services/merchant");
 //const rateLimiter = require("./middlewares/rateLimiter");
 const cors = require("cors");
 const port = process.env.PORT || 3000;
