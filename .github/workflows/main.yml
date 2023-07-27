@@ -137,6 +137,5 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             docker compose -f /home/app/docker-compose.prod.yml down --remove-orphans
-            docker compose -f /home/app/docker-compose.prod.yml up -d --build --no-cache
-
+            docker compose -f /home/app/docker-compose.prod.yml up -d --build
           
