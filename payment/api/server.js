@@ -28,11 +28,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-
 // TODO: Add env variable to enable/disable rate limiter
 //app.use(rateLimiter.rateLimiter);
 
-const contactService = require("./services/contact")
+const contactService = require("./services/contact");
+const { UUIDV4 } = require("sequelize");
 app.use(require("./routes/security")(merchantService, contactService));
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
@@ -50,6 +50,20 @@ app.get("/health", authentificationGuard({ BasicAuth: true}), (req, res) => {
 
 app.post('/convert', require('./controllers/currencyConverter').currencyConverterController);
 
+app.get('/regenerateToken', authentificationGuard({ JWTAuth: true}), (req, res) => {
+
+  const merchantService = require("./services/merchant");
+  const merchant = merchantService.findById(req.user.id);
+  const { v4: uuidv4 } = require('uuid');
+
+  merchant.client_secret = uuidv4();
+  merchant.client_token = uuidv4();
+
+  merchantService.update({merchant_id: req.user.id}, merchant);
+  console.log(merchant);
+
+  res.send(merchant);
+});
 
 //TODO this route corresponds to operation
 app.post('/operations', (req, res) => {

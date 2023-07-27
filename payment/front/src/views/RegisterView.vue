@@ -2,9 +2,10 @@
 import { ref, watch, computed } from 'vue';
 import Valid from '@/assets/icons/Valid.vue';
 import Invalid from '@/assets/icons/Invalid.vue';
-
-const password = ref('');
-
+// Importez le service API
+import apiService from "@/services/apiService";
+import route from "../router";
+const pw = ref("");
 // Password validation properties
 const validPassword = {
     pwlength: false,
@@ -14,13 +15,78 @@ const validPassword = {
 };
 
 // Watch password
-watch(password, (value) => {
+watch(pw, (value) => {
     validPassword.pwlength = value.length >= 8;
     validPassword.pwuppercase = value.match(/[A-Z]/) !== null;
     validPassword.pwlowercase = value.match(/[a-z]/) !== null;
     validPassword.pwnumber = value.match(/[0-9]/) !== null;
     validPassword.pwspecial = value.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/) !== null;
 });
+
+// Define the reactive variables
+const companyName = ref("");
+const email = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const FirstName = ref("");
+const LastName = ref("");
+const role = ref("");
+const country = ref("");
+const city = ref("");
+const address = ref("");
+const phoneNumber = ref("");
+const zipCode = ref("");
+const kbis = ref("");
+const contactEmail = ref("");
+const cancellationUrl = ref("");
+const confirmationUrl = ref("");
+
+// Create the registerMerchant function
+async function registerMerchant() {
+    try {
+        // Données du formulaire
+        const merchantData = {
+            name: companyName.value,
+            email: email.value,
+            kbis: kbis.value,
+            country: country.value,
+            city: city.value,
+            address: address.value,
+            postal_code: zipCode.value,
+            phone: phoneNumber.value,
+            redirectUrlConfirmation: confirmationUrl.value,
+            redirectUrlCancellation: cancellationUrl.value,
+            password: pw.value,
+        };
+
+        // Données du formulaire de contact
+        const contactData = {
+            firstname: FirstName.value,
+            lastname: LastName.value,
+            email: contactEmail.value,
+            title: role.value,
+        };
+
+        const data = {
+            merchantData: merchantData,
+            contactData: contactData,
+        };
+
+        console.log(data);
+
+        // Appelez la fonction d'enregistrement du marchand du service API en passant les données complètes
+        const newMerchant = await apiService.registerMerchant(data);
+
+        console.log("hello", newMerchant);
+        console.log("newMerchant.isvalid", newMerchant.isvalid);
+        if (newMerchant && !newMerchant.isvalid) {
+            route.push('/login');
+        }
+        // Traitement des étapes suivantes après l'enregistrement réussi (par exemple, afficher un message de succès)
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 </script>
 
@@ -51,7 +117,7 @@ watch(password, (value) => {
                         <!-- <form @submit.prevent="registerMerchant"> -->
                         <div class="grid grid-cols-6 gap-6">
                             <div class="col-span-6 sm:col-span-3">
-                                <FormKit v-model="companyName" type="text" name="company-name" id="company-name" label="Nom de l'entreprise" placeholder="Amazon" validation="required|text|between:1,50"
+                                <FormKit v-model="companyName" type="text" name="company-name" id="company-name" label="Nom de l'entreprise" placeholder="Amazon" validation="required|text"
                                 :input-class="{
                                         'shadow-sm': true,
                                         'bg-gray-50': true,
@@ -114,16 +180,19 @@ watch(password, (value) => {
                             <!-- Mot de passe -->
                             <div class="col-span-6 sm:col-span-3">
                                 <FormKit
-                                    v-model="password"
+                                    v-model="pw"
+
                                     type="password"
-                                    name="current-password"
-                                    id="current-password"
-                                    label="Mot de passe"
-                                    placeholder="••••••••"
+                                    name="password"
+                                    value="super-secret"
+                                    label="Password"
+                                    help="Enter a new password"
                                     validation="required|+length:8"
+                                    validation-visibility="live"
                                     :validation-messages="{
                                         length: 'Le mot de passe doit être supérieur à 8 caractères',
                                     }"
+                                    placeholder="••••••••"
 
                                     :input-class="{
                                         'shadow-sm': true,
@@ -153,12 +222,14 @@ watch(password, (value) => {
                             <!-- Confirmation de mot de passe -->
                             <div class="col-span-6 sm:col-span-3">
                                 <FormKit
+                                    v-model="confirmPassword"
                                     type="password"
-                                    name="password"
-                                    id="password"
+                                    name="password_confirm"
+                                    label="Confirmation de mot de passe"
+                                    help="Confirm your new password"
                                     validation="required|confirm"
                                     validation-visibility="live"
-                                    label="Confirmation de mot de passe"
+                                    validation-label="Password confirmation"
                                     placeholder="••••••••"
                                     :validation-messages="{
                                         length: 'Le mot de passe ne correspond pas',
@@ -189,7 +260,7 @@ watch(password, (value) => {
                                 />
                             </div>
 
-                            <div class="col-span-6 sm:col-span-6" v-show="password">
+                            <div class="col-span-6 sm:col-span-6" v-show="pw">
                                 <div class="p-3 space-y-2">
                                     <h3 class="font-semibold text-gray-900 dark:text-white">
                                         Mot de passe doit contenir au moins 8 caractères
@@ -509,7 +580,7 @@ watch(password, (value) => {
                                 <FormKit v-model="LastName" type="text" name="lastname" id="lastname"
                                 label="Nom de contact"
                                 placeholder="John"
-                                validation="required|text|between:1,50"
+                                validation="required|text"
                                 :validation-messages="{
                                     length: 'Entrez un nom valide',
                                 }"
@@ -541,7 +612,7 @@ watch(password, (value) => {
                                 <FormKit v-model="FirstName" type="text" name="firstname" id="firstname"
                                 label="Prénom de contact"
                                 placeholder="Doe"
-                                validation="required|text|between:1,50"
+                                validation="required|text"
                                 :validation-messages="{
                                     length: 'Entrez un prénom valide',
                                 }"
@@ -571,7 +642,7 @@ watch(password, (value) => {
                             <!-- Rôle -->
                             <div class="col-span-6 sm:col-span-3">
                                 <FormKit v-model="role" type="text" name="role" id="role" label="Rôle" placeholder="Responsable des communications"
-                                validation="?text|between:2,50"
+                                validation="text"
                                 :validation-messages="{
                                     length: 'Entrez un rôle valide',
                                 }"
@@ -603,7 +674,7 @@ watch(password, (value) => {
                                 <FormKit v-model="department" type="text" name="department" id="department"
                                 label="Département"
                                 placeholder="Ventes"
-                                validation="?text|between:2,50"
+                                validation="text"
                                 :validation-messages="{
                                     length: 'Entrez un département valide',
                                 }"
