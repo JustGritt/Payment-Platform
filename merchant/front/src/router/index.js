@@ -25,16 +25,16 @@ const routes = [
       requiresAuth: true,
     },
     children: [
-      {
-        path: "/dashboard/settings",
-        name: "Settings",
-        component: () => import("../views/Settings.vue"),
-      },
-			{
-				path: "/dashboard/orders",
-				name: "Orders",
-				component: () => import("../views/OrderView.vue"),
-			},
+        {
+            path: "/dashboard/settings",
+            name: "Settings",
+            component: () => import("../views/Settings.vue"),
+        },
+        {
+            path: "/dashboard/orders",
+            name: "Orders",
+            component: () => import("../views/OrderView.vue"),
+        },
     ],
   },
 ];

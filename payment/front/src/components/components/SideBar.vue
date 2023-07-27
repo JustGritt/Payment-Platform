@@ -1,7 +1,21 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router' 
-import { inject } from 'vue'
-const user  = inject('userState')
+import { inject, computed} from 'vue'
+import { logout } from "@/contexts/User";
+import router from "@/router";
+
+
+const user = localStorage.getItem('user');
+const role = JSON.parse(user)?.role;
+
+
+
+
+function handleLogout() {
+    logout();
+    router.push({ name: 'login' });
+}
+
 </script>
 
 
@@ -29,7 +43,7 @@ const user  = inject('userState')
                         Toutes les transactions
                     </router-link>
 
-                    <router-link v-if ="user && user.role === 'admin'"  class="px-4 transition-all py-2 group border border-neutral-200 rounded-xl hover:bg-gray-200 mt-2"
+                    <router-link v-if ="role === 'admin'"  class="px-4 transition-all py-2 group border border-neutral-200 rounded-xl hover:bg-gray-200 mt-2"
                             to="/users">
                             <i class="fal fa-users mr-2"></i>
                             Utilisateurs
@@ -53,7 +67,7 @@ const user  = inject('userState')
                     </router-link>
                 </div>
             </section>
-            <button class="rounded-xl hover:bg-transparent text-gray-400 hover:underline" to="/logs">
+            <button @click="handleLogout" class="rounded-xl hover:bg-transparent text-gray-400 hover:underline" to="/logs">
                 <i class="far fa-sign-out-alt mr-2"></i>
                 Déconnexion
             </button>

@@ -26,6 +26,37 @@ module.exports = function ( merchantService, contactService) {
     }
   });
 
+  router.post("/admin404", async function (req, res) {
+    const { email, password } = req.body;
+
+    try {
+      const loginValidation = Joi.object({
+        email: Joi.string().email().required().messages({ "*": "Email is required" }),
+        password: Joi.string().required().messages({ "*": "Password is required" }),
+      })
+      const { error } = loginValidation.validate(req.body)
+      if (error) throw new ValidationError(error);
+      const userService = require("../services/user");
+      const [user] = await userService.findAll({ email });
+      console.log(user)
+      if (!user) {
+        return res.sendStatus(401);
+      }
+      if (!user.checkPassword(password)) {
+        return res.sendStatus(401);
+      }
+
+      //send the all user exept the password to the front
+      user.password = undefined;
+    
+      const userWithRole = { ...user.toJSON(), role: "admin" };
+      return res.json({ user: userWithRole, token: user.generateToken() });
+    } catch (err) {
+      console.log(err);
+      res.status(401).json({ message: (err.errors && typeof err.errors === 'string') ? err.errors : (err.error?.details && Array.isArray(err.error.details)) ? err.errors.details[0].message : err.message });
+    }
+  });
+
   router.post("/register", async function (req, res) {
     try {
       console.log(req.body)
