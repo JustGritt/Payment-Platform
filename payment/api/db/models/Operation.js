@@ -1,4 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
+const { getDb } = require('../mongoConnection'); // adjust the path accordingly
+
 
 module.exports = function (connection) {
     class Operation extends Model {
@@ -45,11 +47,16 @@ module.exports = function (connection) {
         }
     );
 
-    // Add hook to update the operation state
     Operation.addHook("afterCreate", async (operation, options) => {
         operation.status = "Pending"; // Pending by default
         await operation.save({ fields: ["status"] });
-    });
+        const db = getDb();
+        const collection = db.collection('operations');
+        const document = {
+        operation: operation.dataValues,
+    };
+    await collection.insertOne(document);
+});
 
     return Operation;
 };

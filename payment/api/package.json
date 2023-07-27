@@ -24,6 +24,7 @@
     "http-proxy-middleware": "^2.0.6",
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.1",
+    "mongodb": "^5.7.0",
     "pg": "^8.11.1",
     "random-id": "^1.0.4",
     "sequelize": "^6.32.1"
