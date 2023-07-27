@@ -78,9 +78,6 @@
                           @click="click">Submit</button>
                       </template>
                     </payment-form>
-                    <!-- <p class="mt-6 text-center">
-                      <a href="#" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">View Shopping Bag</a>
-                    </p> -->
                   </div>
                 </PopoverPanel>
                 <PopoverPanel v-else

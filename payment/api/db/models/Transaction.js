@@ -80,13 +80,6 @@ module.exports = function (connection) {
         const Operation = connection.models.Operation;
         const TransactionHistory = connection.models.TransactionHistory;
 
-        // Assume that you have a field 'state' in the Operation model representing its state
-        // You may need to adjust this logic based on your actual application requirements
-        const operation = await Operation.findByPk(transaction.operation_id);
-        if (operation) {
-            operation.state = "completed"; // Update the state to 'completed' (or any other desired state)
-            await operation.save({ fields: ["state"] });
-        }
         await TransactionHistory.create({
             transaction_state: transaction.transaction_state,
             transaction_id: transaction.transaction_id,
@@ -96,13 +89,12 @@ module.exports = function (connection) {
 
     // Add hook to update the operation_date
     Transaction.addHook("afterUpdate", async (transaction, options) => {
-        if (transaction.changed('s', 'completed')) {
-            await TransactionHistory.create({
-                transaction_state: transaction.transaction_state,
-                transaction_id: transaction.transaction_id,
-                transaction_date: transaction.transaction_date
-            })
-        }
+        const TransactionHistory = connection.models.TransactionHistory;
+        await TransactionHistory.create({
+            transaction_state: transaction.transaction_state,
+            transaction_id: transaction.transaction_id,
+            transaction_date: transaction.transaction_date
+        })
     })
 
     return Transaction;

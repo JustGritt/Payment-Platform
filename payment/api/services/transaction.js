@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 const Joi = require("joi");
-const { Transaction, Currency, Client } = require("../db"); // Assuming the Transaction model is defined in "../db"
+const { Transaction, Currency, Client, TransactionState, Operation } = require("../db"); // Assuming the Transaction model is defined in "../db"
 const ValidationError = require("../errors/ValidationError");
 
 module.exports = {
@@ -13,6 +13,31 @@ module.exports = {
   },
   findById: async function (id) {
     return Transaction.findByPk(id);
+  },
+  pay: async function (args) {
+    const { id, clientData, operation_id } = args;
+    const transaction = await Transaction.findByPk(id);
+    if (clientData) {
+      let client;
+      client = await Client.findOne({ where: { email: clientData.email } });
+      if (client === null) {
+        client = await Client.create(clientData)
+      }
+      transaction.client_id = client.dataValues.client_id
+    }
+    const operation = await Operation.findByPk(operation_id);
+    operation.status = "completed"
+    operation.save({ fields: ["status"] })
+    const transaction_state = await TransactionState.findOne({
+      where: {
+        name: "completed",
+      }
+    });
+    if (transaction_state) {
+      transaction.transaction_state = transaction_state.dataValues.transaction_id;
+    }
+    transaction.operation_id = operation_id
+    return await transaction.save({ fields: ["operation_id", "transaction_state", "client_id"] });
   },
   create: async function (data, user) {
     try {
@@ -48,36 +73,13 @@ module.exports = {
   },
   update: async function (criteria, data) {
     try {
-      const shemaValidation = Joi.object({
-        client: Joi.object({
-          email: Joi.string().email(),
-          firstname: Joi.string(),
-          lastname: Joi.string(),
-          phone_number: Joi.string(),
-          address: Joi.string(),
-          address2: Joi.string(),
-        }),
-      })
-      const { error } = shemaValidation.validate(data)
-      if (error) throw new ValidationError(error.message);
-
-      let client;
-      if (data.client) {
-        client = await Client.findOne({ where: { email: data.client.email } });
-        if (client === null) {
-          client = await Client.create(data.client)
-        }
-        data.client_id = client.dataValues.client_id
-      }
       const [nb, clients = []] = await Transaction.update(data, {
         where: criteria,
         returning: true,
         individualHooks: true,
       });
-      console.log(nb, clients);
       return clients;
     } catch (e) {
-
       if (e instanceof Sequelize.ValidationError) {
         throw ValidationError.createFromSequelizeValidationError(e);
       }

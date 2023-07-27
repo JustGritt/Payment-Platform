@@ -12,7 +12,7 @@ import CardInputCvC from './CardInputs/CardInputCVC.vue'
 import CardInputNumberVue from './CardInputs/CardInputNumber.vue'
 import CardInputExpiry from './CardInputs/CardInputExpiry.vue'
 
-const { amount, currency, submitForm, submitting } = defineProps(['amount', 'currency', 'submitting', 'submitForm'])
+const { amount, currency, submitForm, submitting, meta } = defineProps(['amount', 'currency', 'submitting', 'submitForm', 'meta'])
 
 
 const values = ref({
@@ -51,18 +51,7 @@ const [zodPlugin, submitHandler] = createZodPlugin(
     })
 
 
-const products = [
-    {
-        id: 1,
-        name: 'Product 1',
-        price: 100
-    },
-    {
-        id: 2,
-        name: 'Product 2',
-        price: 200
-    }
-]
+const products = meta.products ?? []
 
 </script>
 <style lang="scss">
@@ -85,9 +74,17 @@ const products = [
             </div>
             <div v-if="is_details_opened" class="details-payment-info">
                 <ul>
-                    <li  v-for="product in products">
+                    <li v-for="product in products">
                         <span class="little-label">{{ product.name }}</span>
-                        <h4>{{ product.price }} €</h4>
+                        <h4>{{ `${product.quantity} x ${(product.price).replaceAll('$', '')}` }} € </h4>
+                    </li>
+                    <li class="tva">
+                        <span class="little-label">TVA</span>
+                        <h4>+ 0.20%</h4>
+                    </li>
+                    <li>
+                        <span ref="thisDiv" class="label-title">Total</span>
+                        <h4 class="label-title">{{ amount }} €</h4>
                     </li>
                 </ul>
             </div>
@@ -163,7 +160,8 @@ const products = [
                 '!btn-disabled': submitting == true ? true : false
             }" :disabled="submitting" :label="submitting ? 'Payment in progress...' : 'Pay now'"
                 outer-class="$reset btn-save-payment" />
-            <button type="button" @click="() => { this.$emit('close') }" class="btn-cancel-payment">
+            <button :disabled="submitting" type="button" @click="() => { this.$emit('close') }"
+                :class="['btn-cancel-payment', submitting ? '!btn-disabled' : '']">
                 Cancel
             </button>
         </section>
