@@ -38,6 +38,11 @@ module.exports = function (connection) {
                     is: /^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/
                 }
             },
+            createdAt: {
+                allowNull: false,
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW,
+            },
         },
         {
             sequelize: connection,

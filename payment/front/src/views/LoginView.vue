@@ -37,25 +37,28 @@
 </template>
   
 <script setup>
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import router from "../router";
 import apiService from '../services/apiService';
-import { userState } from '../contexts/User';
+import { userState } from '../contexts/User'; // Import userState here
 
 const email = ref('');
 const password = ref('');
 
-// Function to handle the form submission
-const handleSubmit = (event) => {
-  event.preventDefault();
-  const data = {
-    email: email.value,
-    password: password.value
-  };
-  apiService.login(data)
+//check if the route is admin or login 
+const checkRoute = () => {
+  if (router.currentRoute.value.name === 'login') {
+    return true;
+  }
+  return false;
+};
+
+const sendAdminLogin = (data) => {
+  apiService.adminLogin(data)
     .then((response) => {
       if (response.status === 200) {
         userState.user = response.data.user;
+        userState.role = response.data.user.role || 'user';
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         router.push({ name: 'home' });
@@ -64,7 +67,31 @@ const handleSubmit = (event) => {
     .catch((error) => {
       console.log(error);
     });
+};
 
+const sendLogin = (data) => {
+  apiService.login(data)
+    .then((response) => {
+      if (response.status === 200) {
+        userState.user = response.data.user;
+        userState.role = response.data.user.role || 'user';
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        router.push({ name: 'home' });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+// Function to handle the form submission
+const handleSubmit = (event) => {
+  event.preventDefault();
+  const data = {
+    email: email.value,
+    password: password.value
+  };
+  checkRoute() ? sendLogin(data) : sendAdminLogin(data);
 };
 </script>
   

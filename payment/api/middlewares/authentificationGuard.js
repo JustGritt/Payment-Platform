@@ -2,7 +2,14 @@ const jwt = require("jsonwebtoken");
 
 exports.authentificationGuard = (options) => async function (req, res, next) {
   if (options.JWTAuth) {
-    const token = req.cookies.token;
+    //the token is set in the Bearers
+    const authorizationHeader = req.headers['authorization'];
+    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+      return res.sendStatus(401); // Unauthorized: Bearer token is not present or has an invalid format
+    }
+
+    // Extract the token from the 'Authorization' header
+    const token = authorizationHeader.split(' ')[1];
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = decoded;

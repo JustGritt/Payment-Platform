@@ -36,6 +36,7 @@ const contactService = require("./services/contact")
 app.use(require("./routes/security")(merchantService, contactService));
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
+app.use("/merchants", authentificationGuard({JWTAuth: true}), new GenericRouter(new GenericController(merchantService)));
 app.use("/transactions", authentificationGuard, new GenericRouter(new GenericController(transactionService)));
 app.use("/operations", new GenericRouter(new GenericController(operationService)));
 

@@ -88,5 +88,23 @@ module.exports = function (connection) {
         }
     });
 
+
+    /*
+    Transaction.addHook("afterCreate", async (transaction, options) => {
+        // Retrieve associated data using the provided associations with the `include` option
+        const fullTransaction = await Transaction.findByPk(transaction.transaction_id, {
+          include: [
+            { model: connection.models.Merchant },
+            { model: connection.models.Operation },
+            { model: connection.models.OperationHistory },
+            { model: connection.models.TransactionHistory },
+          ],
+        });
+
+        console.log("New transaction created:", fullTransaction.toJSON());
+    });
+    */
+    
+
     return Transaction;
 };
