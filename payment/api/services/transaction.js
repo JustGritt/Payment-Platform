@@ -22,40 +22,24 @@ module.exports = {
           return r.dataValues;
         })
       })
-      console.log(user);
-      data.merchant_id = user.id
+      data.merchant_id = user.merchant_id
       const shemaValidation = Joi.object({
         currency: Joi.string().valid(...currencies.map((r) => r.name)).required(),
         merchant_id: Joi.number(),
         amount: Joi.number().required(),
-        client: Joi.object({
-          email: Joi.string().email().required(),
-          firstname: Joi.string(),
-          lastname: Joi.string(),
-          phone_number: Joi.string(),
-          address: Joi.string(),
-          address2: Joi.string(),
-        }).required(),
       })
       const { error } = shemaValidation.validate(data)
       if (error) throw new ValidationError(error.message);
 
       data.transaction_amount = data.amount
 
-      let client;
-      client = await Client.findOne({ where: { email: data.client.email } });
-      if (client === null) {
-        client = await Client.create(data.client)
-      }
-      data.client_id = client.dataValues.client_id
-
       const currency = await Currency.findOne({ where: { name: data.currency } });
       if (currency === null) throw new ValidationError("Invalid currency");
       data.currency_id = currency.dataValues.currency_id
 
-
       return await Transaction.create(data);
     } catch (e) {
+      console.log(e);
       if (e instanceof Sequelize.ValidationError) {
         throw ValidationError.createFromSequelizeValidationError(e);
       }
@@ -64,6 +48,27 @@ module.exports = {
   },
   update: async function (criteria, data) {
     try {
+      const shemaValidation = Joi.object({
+        client: Joi.object({
+          email: Joi.string().email(),
+          firstname: Joi.string(),
+          lastname: Joi.string(),
+          phone_number: Joi.string(),
+          address: Joi.string(),
+          address2: Joi.string(),
+        }),
+      })
+      const { error } = shemaValidation.validate(data)
+      if (error) throw new ValidationError(error.message);
+
+      let client;
+      if (data.client) {
+        client = await Client.findOne({ where: { email: data.client.email } });
+        if (client === null) {
+          client = await Client.create(data.client)
+        }
+        data.client_id = client.dataValues.client_id
+      }
       const [nb, clients = []] = await Transaction.update(data, {
         where: criteria,
         returning: true,
@@ -72,6 +77,7 @@ module.exports = {
       console.log(nb, clients);
       return clients;
     } catch (e) {
+
       if (e instanceof Sequelize.ValidationError) {
         throw ValidationError.createFromSequelizeValidationError(e);
       }
