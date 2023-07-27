@@ -1,12 +1,15 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 import SideBar from './components/components/SideBar.vue';
+import { userState } from './contexts/User.js';
+
+import { computed } from 'vue';
+const isLoggedIn = computed(() => !!userState.user);
+
 </script>
 
-
 <template>
-  <SideBar />
+  <SideBar v-if="isLoggedIn" /> 
   <RouterView />
 </template>
 

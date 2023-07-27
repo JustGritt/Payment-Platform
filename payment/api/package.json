@@ -5,8 +5,10 @@
   "main": "server.js",
   "scripts": {
     "test": "npx jest --detectOpenHandles",
-    "dev": "node server.js",
-    "seed": "node ./migrate.js"
+    "dev": "node --watch server.js",
+    "seed": "node ./migrate.js",
+    "seed:all": "npx sequelize-cli db:seed:all",
+    "make:migration": "npx sequelize-cli db:migrate"
   },
   "keywords": [],
   "author": "",
@@ -15,16 +17,19 @@
     "@upstash/ratelimit": "^0.4.3",
     "@upstash/redis": "^1.22.0",
     "bcryptjs": "^2.4.3",
+    "card-validator": "8.1.1",
     "cheerio": "^1.0.0-rc.12",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "http-proxy-middleware": "^2.0.6",
+    "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.1",
     "pg": "^8.11.1",
     "random-id": "^1.0.4",
-    "sequelize": "^6.32.1"
+    "sequelize": "^6.32.1",
+    "sequelize-cli": "^6.6.1"
   },
   "devDependencies": {
     "jest": "^29.6.1",

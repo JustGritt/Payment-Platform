@@ -1,5 +1,5 @@
 const { Sequelize } = require("sequelize");
-const { Merchant } = require("../db");
+const { Merchant } = require("../db"); // Assuming the Merchant model is defined in "../db"
 const ValidationError = require("../errors/ValidationError");
 
 module.exports = {
@@ -12,6 +12,19 @@ module.exports = {
   },
   findById: async function (id) {
     return Merchant.findByPk(id);
+  },
+  login: async function (data) {
+    try {
+      const merchant = await Merchant.findOne({ where: { email: data.email } });
+      if (!merchant) throw new ValidationError("Invalid email or password");
+      if (!merchant.checkPassword(data.password)) throw new ValidationError("Invalid email or password");
+      return { merchant, token: merchant.generateToken() };
+    } catch (e) {
+      if (e instanceof Sequelize.ValidationError) {
+        throw ValidationError.createFromSequelizeValidationError(e);
+      }
+      throw e;
+    }
   },
   create: async function (data) {
     try {
@@ -30,7 +43,6 @@ module.exports = {
         returning: true,
         individualHooks: true,
       });
-      console.log(nb, merchants);
       return merchants;
     } catch (e) {
       if (e instanceof Sequelize.ValidationError) {

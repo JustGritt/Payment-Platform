@@ -114,6 +114,7 @@ watch(password, (value) => {
                             <!-- Mot de passe -->
                             <div class="col-span-6 sm:col-span-3">
                                 <FormKit
+                                    v-model="password"
                                     type="password"
                                     name="current-password"
                                     id="current-password"

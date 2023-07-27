@@ -1,77 +1,126 @@
-const { Model, DataTypes } = require("sequelize");
+const { Model, DataTypes, UUID, UUIDV4 } = require("sequelize");
 
 module.exports = function (connection) {
-  class Merchant extends Model {
-    static associate(models) {
-        Merchant.hasMany(models.Contact, { foreignKey: "merchant_idmerchant" });
+    class Merchant extends Model {
+        async checkPassword(password) {
+            const bcrypt = require("bcryptjs");
+            return bcrypt.compare(password, this.password);
+        }
+
+        generateToken() {
+            const jwt = require("jsonwebtoken");
+            return jwt.sign({ id: this.id }, process.env.JWT_SECRET, {
+                expiresIn: "1y",
+            });
+        }
+        static associate(models) {
+            Merchant.hasOne(models.Currency, {
+                foreignKey: "currency_id",
+            });
+            Merchant.hasMany(models.Contact, { foreignKey: "merchant_id" });
+        }
     }
 
-    async checkPassword(password) {
-      const bcrypt = require("bcryptjs");
-      return bcrypt.compare(password, this.password);
-    }
-
-    generateToken() {
-      const jwt = require("jsonwebtoken");
-      return jwt.sign({ id: this.id }, process.env.JWT_SECRET, {
-        expiresIn: "1y",
-      });
-    }
-  }
-
-  Merchant.init(
-    {
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          min: 8,
-          //is: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
+    Merchant.init({
+        merchant_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
         },
-      },
-      isvalid: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      kbis: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      redirectUrlConfirmation: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      redirectUrlCancellation: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        email: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
+            validate: {
+                isEmail: true,
+                notNull: {
+                    msg: "Email cannot be null",
+                },
+            },
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                len: {
+                    args: [8],
+                    msg: "Password must be at least 8 characters long",
+                },
+                is: {
+                    args: /[a-z]/,
+                    msg: "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character",
+                },
+            },
+        },
+        kbis: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        phone: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        address: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        postal_code: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        city: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        redirectUrlConfirmation: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        redirectUrlCancellation: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        isvalid: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+        },
+        currency_id: DataTypes.INTEGER,
+        is_active: DataTypes.BOOLEAN,
+        client_token: {
+            type: DataTypes.UUID,
+            unique: true,
+            defaultValue: UUIDV4,
+        },
+        client_secret: {
+            type: DataTypes.UUID,
+            unique: true,
+            defaultValue: UUIDV4,
+        }
     },
-    {
-      sequelize: connection,
-      tableName: "merchants",
-    }
-  );
-
-  async function encryptPassword(merchant, options) {
-    if (!options?.fields.includes("password")) {
-      return;
-    }
-    const bcrypt = require("bcryptjs");
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(merchant.password, salt);
-    merchant.password = hash;
-  }
-
-  Merchant.addHook("beforeCreate", encryptPassword);
-  Merchant.addHook("beforeUpdate", encryptPassword);
-
-  return Merchant;
+        {
+            sequelize: connection,
+            tableName: "merchants",
+            hooks: {
+                beforeCreate: async (client, options) => {
+                    const bcrypt = require("bcryptjs");
+                    const salt_password = await bcrypt.genSalt(10);
+                    const hash = await bcrypt.hash(client.password, salt_password);
+                    client.password = hash;
+                },
+                beforeSave: async (client, options) => {
+                    if (client.changed("password")) {
+                        const bcrypt = require("bcryptjs");
+                        const salt = await bcrypt.genSalt(10);
+                        const hash = await bcrypt.hash(client.password, salt);
+                        client.password = hash;
+                    }
+                },
+            },
+        });
+    return Merchant;
 };

@@ -4,15 +4,25 @@ import { createInput } from '@formkit/vue'
 import { createZodPlugin } from '@formkit/zod'
 import { z } from 'zod'
 import InputCard from './InputCard.vue'
-import InputCreditCard from './InputCreditCard.vue'
+
+import { validateCardNumber as validateCardNumber_ } from '../utils/my-custom-rules/card-input.js'
+import { checkCardExpiry as checkCardExpiry_ } from '../utils/my-custom-rules/card-input.js'
+import { validateCardCVC as validateCardCVC_ } from '../utils/my-custom-rules/card-input.js'
+import CardInputCvC from './CardInputs/CardInputCVC.vue'
+import CardInputNumberVue from './CardInputs/CardInputNumber.vue'
+import CardInputExpiry from './CardInputs/CardInputExpiry.vue'
+
 
 const values = ref({
     "type_payment": "card"
 })
+
 const is_details_opened = ref(false)
 
 const inputCard = createInput(InputCard)
-const inputCreditCard = createInput(InputCreditCard,)
+const cardInputCVC = createInput(CardInputCvC)
+const cardInputNumber = createInput(CardInputNumberVue)
+const inputCardExpiry = createInput(CardInputExpiry)
 
 const zodSchema = z.object({
     email: z.string().email(),
@@ -21,22 +31,31 @@ const zodSchema = z.object({
     adress: z.string(),
     type_payment: z.string(),
     cardNumber: z.object({
-        number: z.number(),
+        card_number: z.string(),
         cvc: z.number(),
         expiry: z.string(),
     }),
 })
 
+
 const [zodPlugin, submitHandler] = createZodPlugin(
     zodSchema,
     async (formData) => {
+        console.log(formData)
         // fake submit handler, but this is where you
         // do something with your valid data.
         await new Promise((r) => setTimeout(r, 2000))
         alert('Form was submitted!')
-        console.log(formData)
     }
-)
+    , {
+        validateOnBlur: true,
+        validateOnChange: true,
+        validateOnInput: true,
+    })
+
+const onErrorForm = (errors) => {
+    console.log(errors)
+}
 
 </script>
 <style lang="scss">
@@ -44,8 +63,8 @@ const [zodPlugin, submitHandler] = createZodPlugin(
 </style>
 
 <template >
-<FormKit  id="form-payment" validation-messages="" on-submit="" :actions="false" type="form" class="form-payment-container" outer-class="i-will-be-appended" v-model="values"
-        :plugins="[zodPlugin]"  @submit="submitHandler">
+    <FormKit id="form-payment" :actions="false" type="form" class="form-payment-container" outer-class="i-will-be-appended"
+        v-model="values" :plugins="[zodPlugin]" @submit="submitHandler">
         <header class="header-payment-form">
             <div class="logo-header-payment-form">
                 <img class="logo-header-payment-form" src="../assets/strapouz.svg" />
@@ -66,8 +85,8 @@ const [zodPlugin, submitHandler] = createZodPlugin(
                         <h4>+ 0.20%</h4>
                     </li>
                     <li>
-                        <span class="label-title">Total</span>
-                    <h4 class="label-title">13.06 €</h4>
+                        <span ref="thisDiv" class="label-title">Total</span>
+                        <h4 class="label-title">13.06 €</h4>
                     </li>
                 </ul>
             </div>
@@ -80,7 +99,7 @@ const [zodPlugin, submitHandler] = createZodPlugin(
 
         <hr class="form-separator">
         <section>
-            <h2 class="label-title">Shipping {{ props }}</h2>
+            <h2 class="label-title">Shipping</h2>
             <div class="form-input-payment mt-10">
                 <label for="name" class="little-label">Name</label>
                 <FormKit type="text" name="name" id="name" placeholder="Enter name" outer-class="$reset formik-inner" />
@@ -116,13 +135,31 @@ const [zodPlugin, submitHandler] = createZodPlugin(
 }" />
 
                 <div class="form-input-payment mt-10">
-                    <FormKit validation="required" :type="inputCreditCard" type="number" name="cardNumber" id="cardNumber"
-                        placeholder="1234 5678 9012 3456" />
+                    <FormKit type="group" name="cardNumber">
+                        <FormKit validation="validateCardNumber:card-number" :validation-rules="{ validateCardNumber }"
+                            :type="cardInputNumber"
+                            :options="{ type: 'tel', vCardformat: 'cardNumber' }" name="card_number"
+                            id="card_number" placeholder="1234 5678 9012 3456" />
+
+                    <FormKit validation="validateCardCVC:card-cvc" :validation-rules="{ validateCardCVC  }"
+                            :type="cardInputCVC" name="cvc"
+                        id="cvc" placeholder="123" />
+
+                    <FormKit validation="checkCardExpiry:card-expiry" :validation-rules="{ checkCardExpiry }"
+                            :type="inputCardExpiry" name="expiry"
+                    id="expiry" placeholder="01/01" />
+                    </FormKit>
+                    <!-- <FormKit type="group" name="personalInfo">
+                        <FormKit @error="this.$refs.validateCardNumber" validation="cardNumber.number"
+                            :type="inputCreditCard" type="number" name="cardNumber" id="cardNumber"
+                            placeholder="1234 5678 9012 3456" />
+                    </FormKit> -->
                 </div>
             </div>
         </section>
         <section class="form-payments-actions">
-            <FormKit type="submit" label="Pay now" outer-class="$reset btn-save-payment" />
+            <FormKit :options="{ mask: '#### #### #### ####' }" type="submit" label="Pay now"
+                outer-class="$reset btn-save-payment" />
             <button type="button" @click="() => { this.$emit('close') }" class="btn-cancel-payment">
                 Cancel
             </button>
@@ -130,3 +167,22 @@ const [zodPlugin, submitHandler] = createZodPlugin(
     </FormKit>
 </template>
 <link href="https://cdn.staticaly.com/gh/hung1001/font-awesome-pro/4cac1a6/css/all.css" rel="stylesheet" type="text/css" />
+
+<script>
+export default {
+    mounted() {
+        console.log(this.$cardFormat)
+    },
+    methods: {
+        validateCardNumber: function (node, group = 'card-number') {
+            return validateCardNumber_.bind(this)(node, group)
+        },
+        validateCardCVC: function (node, group = 'card-cvc') {
+            return validateCardCVC_.bind(this)(node, group)
+        },
+        checkCardExpiry: function (node, group = 'card-expiry') {
+            return checkCardExpiry_.bind(this)(node, group)
+        }
+    }
+}
+</script>

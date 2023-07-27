@@ -6,19 +6,13 @@ let connection;
   
 if (process.env.NODE_ENV === "test") {
   const { database } = require("../tests/testConfig");
-  connection = new Sequelize({
-    dialect: "sqlite",
-    storage: database,
-  });
+  connection = new Sequelize({ dialect: "sqlite", storage: database, });
 } else {
   console.log(process.env.DATABASE_URL);
   connection = new Sequelize(process.env.DATABASE_URL);
 }
 
-
-const db = {
-  connection,
-};
+const db = { connection };
 
 fs.readdirSync(path.join(__dirname, "models")).forEach((file) => {
   const model = require(path.join(__dirname, "models", file))(connection);

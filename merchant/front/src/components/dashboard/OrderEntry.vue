@@ -45,4 +45,3 @@ const { order } = defineProps(["order"]);
 		</a>
 	</td>
 </template>
-
