@@ -12,7 +12,8 @@ import CardInputCvC from './CardInputs/CardInputCVC.vue'
 import CardInputNumberVue from './CardInputs/CardInputNumber.vue'
 import CardInputExpiry from './CardInputs/CardInputExpiry.vue'
 
-const { amount } = defineProps(['amount'])
+const { amount, currency, submitForm, submitting } = defineProps(['amount', 'currency', 'submitting', 'submitForm'])
+
 
 const values = ref({
     "type_payment": "card"
@@ -38,15 +39,10 @@ const zodSchema = z.object({
     }),
 })
 
-
 const [zodPlugin, submitHandler] = createZodPlugin(
     zodSchema,
     async (formData) => {
-        console.log(formData)
-        // fake submit handler, but this is where you
-        // do something with your valid data.
-        await new Promise((r) => setTimeout(r, 2000))
-        alert('Form was submitted!')
+        submitForm(formData);
     }
     , {
         validateOnBlur: true,
@@ -68,7 +64,7 @@ const [zodPlugin, submitHandler] = createZodPlugin(
             <div class="logo-header-payment-form">
                 <img class="logo-header-payment-form" src="../assets/strapouz.svg" />
                 <div class="details-payment-form">
-                    <h1>{{amount}}€</h1>
+                    <h1>{{ amount }}€</h1>
                     <button @click="is_details_opened = !is_details_opened" type="button">Details <i
                             :class="is_details_opened ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" /></button>
                 </div>
@@ -157,8 +153,8 @@ const [zodPlugin, submitHandler] = createZodPlugin(
             </div>
         </section>
         <section class="form-payments-actions">
-            <FormKit :options="{ mask: '#### #### #### ####' }" type="submit" label="Pay now"
-                outer-class="$reset btn-save-payment" />
+            <FormKit :options="{ mask: '#### #### #### ####' }" type="submit"
+                :label="submitting ? 'Pay now' : 'Payment in progress...'" outer-class="$reset btn-save-payment" />
             <button type="button" @click="() => { this.$emit('close') }" class="btn-cancel-payment">
                 Cancel
             </button>
@@ -170,6 +166,12 @@ const [zodPlugin, submitHandler] = createZodPlugin(
 export default {
     mounted() {
         console.log(this.$cardFormat)
+    },
+    props: {
+        onSubmit: Function,
+    },
+    setup(props) {            // receive `props` argument
+        props.onSubmit();     // use it to access `changeForm`
     },
     methods: {
         validateCardNumber: function (node, group = 'card-number') {
