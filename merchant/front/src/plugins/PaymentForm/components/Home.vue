@@ -67,7 +67,7 @@ const onSubmit = async (data) => {
             throw new Error(error.message)
         }
 
-    }, 10000)
+    }, 520000)
 }
 
 </script>

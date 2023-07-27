@@ -1,7 +1,7 @@
 html {
   --blue-primary : #268FFF;
   --grey-fair    : #a6a6a6d4;
-  --grey-gen: #e5e5e5;
+  --grey-gen     : #e5e5e5;
   --primary-input: #F7FAFB;
   --red-light    : #ff6b6b;
 }
@@ -13,62 +13,73 @@ html {
   width           : 100%;
   background-color: white;
   padding         : 10px 20px;
-  border-radius: 12px 12px  0 0;
-  margin-bottom: 10px;
-  .logo-header-payment-form{
-    display         : flex;
-    flex-direction: row;
+  border-radius   : 12px 12px 0 0;
+  margin-bottom   : 10px;
+
+  .logo-header-payment-form {
+    display        : flex;
+    flex-direction : row;
     justify-content: space-between;
-  
+
     img.logo-header-payment-form {
-      height: 45px;
-      width: 98px;
-      transform: scale(2);
+      height    : 45px;
+      width     : 98px;
+      transform : scale(2);
       margin-top: 4px;
     }
-    .details-payment-form{
-      display: flex;
+
+    .details-payment-form {
+      display       : flex;
       flex-direction: column;
-      align-items: flex-end;
-      >h1{
+      align-items   : flex-end;
+
+      >h1 {
         font-size  : 15px;
         font-weight: 600;
       }
-      button{
+
+      button {
         color: var(--grey-fair);
       }
     }
   }
-  .details-payment-info{
-    border-top         : 1px solid var(--grey-gen);
+
+  .details-payment-info {
+    border-top: 1px solid var(--grey-gen);
     margin-top: 12px;
-    >ul{
+
+    >ul {
+
       // padding-top: 4px;
-      li{
-        display: flex;
-        align-items: center;
+      li {
+        display        : flex;
+        align-items    : center;
         justify-content: space-between;
-        padding: 10px 0px;
-        &.tva{
+        padding        : 10px 0px;
+
+        &.tva {
           border-bottom: 1px solid var(--grey-gen);
-          border-top: 1px solid var(--grey-gen);
-          &:last-child{
+          border-top   : 1px solid var(--grey-gen);
+
+          &:last-child {
             border-bottom: none;
-            border-top: none;
+            border-top   : none;
           }
+
           color: var(--grey-fair)
-      
         }
       }
     }
   }
 
 
-  
+
 }
-  #form-payment .formkit-messages #form-payment-incomplete{
-    display: none;
-  }
+
+#form-payment .formkit-messages #form-payment-incomplete {
+  display: none;
+}
+
 .formkit-form {
   max-width         : 600px;
   width             : 100%;
@@ -76,7 +87,8 @@ html {
   -webkit-box-shadow: 0px 0px 15px 5px #e5e5e5;
   box-shadow        : 0px 0px 15px 5px #e5e5e5;
   border-radius     : 12px;
-  padding-bottom: 20px;
+  padding-bottom    : 20px;
+
   section {
     padding: 0px 20px;
   }
@@ -238,6 +250,16 @@ input[type="checkbox"]:checked~.form-input-payment-option {
   border          : 1px solid var(--grey-fair);
   color           : black;
   min-width       : 130px;
+  border-radius   : 5px;
+}
+
+.formkit-form .\!btn-disabled {
+  padding         : 10px 20px !important;
+  background-color: #fff !important;
+  border          : 1px solid var(--grey-fair) !important;
+  color           : black !important;
+  min-width       : 130px !important;
+  cursor          : not-allowed !important;
   border-radius   : 5px;
 }
 
