@@ -25,21 +25,20 @@ exports.authentificationGuard = (options) => async function (req, res, next) {
       if (!authHeader) {
         return res.sendStatus(401); // Return early after sending the response
       }
-      console.log(authHeader);
       const encodedCredentials = authHeader.split(" ")[1];
       const decodedCredentials = Buffer.from(encodedCredentials, "base64").toString("ascii");
       const [clientId, clientToken] = decodedCredentials.split(":");
-      console.log(clientId, clientToken);
 
       const merchantService = require("../services/merchant");
-      const merchant = await merchantService.findAll({ client_token: clientId, client_secret: clientToken });
+      const [merchant] = await merchantService.findAll({ client_token: clientId, client_secret: clientToken });
 
       if (!merchant) {
         return res.sendStatus(401); // Return early after sending the response
       }
-      req.user = merchant;
+      req.user = merchant.dataValues;
       return next();
     } catch (err) {
+      console.log(err);
       return res.sendStatus(401); // Return early after sending the response
     }
   }

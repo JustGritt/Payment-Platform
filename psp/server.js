@@ -30,6 +30,7 @@ app.post("/psp", (req, res) => {
   }
   
   res.sendStatus(202)
+  // res.sendStatus(500)
 
   // Wait for 10 seconds
   setTimeout(() => {

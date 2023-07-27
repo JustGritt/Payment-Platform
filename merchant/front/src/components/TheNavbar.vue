@@ -26,8 +26,7 @@
                 :key="item.name"
                 :href="item.href"
                 class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                >{{ item.name }}</a
-              >
+                >{{ item.name }}</a>
             </div>
           </div>
 

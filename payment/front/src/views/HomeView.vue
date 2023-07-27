@@ -230,12 +230,6 @@ import TransactionEntry from "@/components/components/TransactionEntry.vue";
 					</div>
 				</div>
 			</section>
-
-			<payment-form>
-				<template v-slot="{ click }">
-					<button @click="click">Submit</button>
-				</template>
-			</payment-form>
 		</main>
 	</aside>
 </template>

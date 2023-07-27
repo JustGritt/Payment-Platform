@@ -9,4 +9,6 @@ const pinia = createPinia();
 
 app.use(pinia);
 app.use(router);
-app.mount("#app");
+
+app.use(PaymentForm)
+app.mount('#app');
