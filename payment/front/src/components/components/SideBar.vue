@@ -44,6 +44,12 @@ function handleLogout() {
                     </router-link>
 
                     <router-link v-if ="role === 'admin'"  class="px-4 transition-all py-2 group border border-neutral-200 rounded-xl hover:bg-gray-200 mt-2"
+                            to="/merchant">
+                            <i class="fal fa-users mr-2"></i>
+                            Valider un marchand
+                    </router-link>
+
+                    <router-link v-if ="role === 'admin'"  class="px-4 transition-all py-2 group border border-neutral-200 rounded-xl hover:bg-gray-200 mt-2"
                             to="/users">
                             <i class="fal fa-users mr-2"></i>
                             Utilisateurs

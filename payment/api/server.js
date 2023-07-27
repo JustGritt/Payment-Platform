@@ -37,7 +37,7 @@ app.use(require("./routes/security")(merchantService, contactService));
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
 app.use("/merchants", authentificationGuard({JWTAuth: true}), new GenericRouter(new GenericController(merchantService)));
-app.use("/transactions", authentificationGuard, new GenericRouter(new GenericController(transactionService)));
+app.use("/transactions", authentificationGuard({JWTAuth: true}), new GenericRouter(new GenericController(transactionService)));
 app.use("/operations", new GenericRouter(new GenericController(operationService)));
 
 app.get("/", (req, res) => {
@@ -65,6 +65,43 @@ app.get('/regenerateToken', authentificationGuard({ JWTAuth: true}), (req, res) 
   res.send(merchant);
 });
 
+app.get('/pendingMerchant', authentificationGuard({ JWTAuth: true}), async (req, res) => {
+  const userService = require("./services/user");
+  const user = await userService.findById( req.user.id);
+  if(!user) {
+    res.sendStatus(401);
+  }
+  const merchant = await merchantService.findAll({isvalid: false});
+  console.log(merchant)
+
+  res.json(merchant);
+
+
+})
+
+
+app.post('/validateMerchant', authentificationGuard({ JWTAuth: true}),async (req, res) => {
+  const userService = require("./services/user");
+  const user = await userService.findById( req.user.id);
+
+  if(user) {
+    const merchant = await merchantService.findById(req.body.merchant_id);
+    console.log(merchant)
+    if(merchant) {
+      const response = await merchantService.update({merchant_id: req.body.merchant_id}, {isvalid: true});
+      console.log("response", response);
+      return res.sendStatus(200);
+    }
+    else {
+      return res.sendStatus(404);
+    }
+  }
+  else {
+    return res.sendStatus(404);
+  }
+});
+
+
 //TODO this route corresponds to operation
 app.post('/operations', (req, res) => {
 
@@ -87,7 +124,7 @@ app.post('/operations', (req, res) => {
     .catch(error => {
       console.error('Error sending payment response:', error.message);
     });
-    
+
     //TODO: go find in db the confirmation url and send it back to the client
     const CONFIRMATION_URL = 'http://localhost:3000/psp/confirmation';
     res.redirect(303, CONFIRMATION_URL);

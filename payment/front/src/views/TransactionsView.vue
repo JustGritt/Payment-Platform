@@ -1,17 +1,14 @@
-<script setup>
-import TransactionEntry from "@/components/components/TransactionEntry.vue";
-</script>
 
 <template>
   <aside class="w-full px-9 mt-8">
     <h3 class="font-blooming text-4xl leading-none">Transactions chart</h3>
     <section class="w-full">
-      <apexchart
+      <!-- <apexchart
         width="500"
         type="bar"
         :options="chartOptions"
         :series="series"
-      ></apexchart>
+      ></apexchart> -->
     </section>
 
     <section
@@ -207,51 +204,22 @@ import TransactionEntry from "@/components/components/TransactionEntry.vue";
 
 <style></style>
 
-<script>
-import { getTagClass } from "@/lib/utils.js";
-export default {
-  data: function () {
-    return {
-      chartOptions: {
-        xaxis: {
-          categories: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ],
-        },
-        stroke: {
-          curve: "smooth",
-        },
-        zoom: {
-          enabled: true,
-        },
-        chart: {
-          id: "vuechart-example",
-          type: "area",
-          height: 350,
-        },
-      },
+<script setup>
+import TransactionEntry from "@/components/components/TransactionEntry.vue";
+import { ref, computed, onMounted } from 'vue'
+import apiService from '../services/apiService'
 
-      series: [
-        {
-          name: "series-1",
-          data: [30, 40, 35, 50, 49, 60, 70, 91, 125, 150, 170, 190],
-        },
-      ],
-    };
-  },
-  methods: {
-    getTagClass,
-  },
-};
+
+apiService.getAllTransaction()
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((error) => {
+    if (error.response && error.response.status == 401) {
+        error.value = true;
+    } else {
+        console.log(error);
+    }})
+
+
 </script>

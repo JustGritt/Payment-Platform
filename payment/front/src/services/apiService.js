@@ -40,6 +40,13 @@ export default {
 
   adminLogin: async (data) => {
     try {
+
+      apiClient.interceptors.request.use(config => {
+        console.log(userState.token)
+        config.headers.Authorization = `Bearer ${userState.token}`;
+        return config;
+      });
+
       console.log(data);
       const response = await apiClient.post("/admin404", JSON.stringify(data));
       return response;
@@ -50,6 +57,13 @@ export default {
 
   getAllMerchants: async () => {
     try {
+
+      apiClient.interceptors.request.use(config => {
+        console.log(userState.token)
+        config.headers.Authorization = `Bearer ${userState.token}`;
+        return config;
+      });
+
       const response = await apiClient.get("/merchants");
       return response.data;
     } catch (error) {
@@ -72,5 +86,55 @@ export default {
       throw error;
     }
   },
+
+  validateMerchant: async (data) => {
+    try {
+
+      apiClient.interceptors.request.use(config => {
+        console.log(userState.token)
+        config.headers.Authorization = `Bearer ${userState.token}`;
+        return config;
+      });
+
+      const response = await apiClient.post("/validateMerchant", data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+
+  getPendingMerchants: async() => {
+    try {
+
+      apiClient.interceptors.request.use(config => {
+        console.log(userState.token)
+        config.headers.Authorization = `Bearer ${userState.token}`;
+        return config;
+      });
+
+      const response = await apiClient.get("/pendingMerchant");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getAllTransaction: async() => {
+    try {
+
+      apiClient.interceptors.request.use(config => {
+        console.log(userState.token)
+        config.headers.Authorization = `Bearer ${userState.token}`;
+        return config;
+      });
+
+      const response = await apiClient.get("/transactions");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+
+  }
 
 };
