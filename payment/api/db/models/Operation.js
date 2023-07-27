@@ -20,7 +20,10 @@ module.exports = function (connection) {
                 type: DataTypes.FLOAT,
                 allowNull: false,
             },
-            status: DataTypes.STRING, // Refund - Pending - Success - Failed
+            status: {
+                type: DataTypes.STRING,
+                defaultValue: "pending",
+            }, // Refund - Pending - Success - Failed
             transaction_id: DataTypes.INTEGER,
             card_number: {
                 type: DataTypes.STRING,
@@ -49,12 +52,6 @@ module.exports = function (connection) {
             tableName: "operations",
         }
     );
-
-    // Add hook to update the operation state
-    Operation.addHook("afterCreate", async (operation, options) => {
-        operation.status = "Pending"; // Pending by default
-        await operation.save({ fields: ["status"] });
-    });
 
     return Operation;
 };

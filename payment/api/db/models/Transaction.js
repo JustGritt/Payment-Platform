@@ -20,7 +20,7 @@ module.exports = function (connection) {
             });
 
             Transaction.hasOne(models.TransactionState, {
-                foreignKey: "transaction_state",
+                foreignKey: "transaction_id",
             });
         }
     }
@@ -37,7 +37,7 @@ module.exports = function (connection) {
         currency_id: DataTypes.INTEGER,
         client_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
         },
         merchant_id: {
             type: DataTypes.INTEGER,
@@ -78,33 +78,24 @@ module.exports = function (connection) {
     })
     Transaction.addHook("afterCreate", async (transaction, options) => {
         const Operation = connection.models.Operation;
+        const TransactionHistory = connection.models.TransactionHistory;
 
-        // Assume that you have a field 'state' in the Operation model representing its state
-        // You may need to adjust this logic based on your actual application requirements
-        const operation = await Operation.findByPk(transaction.operation_id);
-        if (operation) {
-            operation.state = "completed"; // Update the state to 'completed' (or any other desired state)
-            await operation.save({ fields: ["state"] });
-        }
+        await TransactionHistory.create({
+            transaction_state: transaction.transaction_state,
+            transaction_id: transaction.transaction_id,
+            transaction_date: transaction.transaction_date
+        })
     });
 
-
-    /*
-    Transaction.addHook("afterCreate", async (transaction, options) => {
-        // Retrieve associated data using the provided associations with the `include` option
-        const fullTransaction = await Transaction.findByPk(transaction.transaction_id, {
-          include: [
-            { model: connection.models.Merchant },
-            { model: connection.models.Operation },
-            { model: connection.models.OperationHistory },
-            { model: connection.models.TransactionHistory },
-          ],
-        });
-
-        console.log("New transaction created:", fullTransaction.toJSON());
-    });
-    */
-    
+    // Add hook to update the operation_date
+    Transaction.addHook("afterUpdate", async (transaction, options) => {
+        const TransactionHistory = connection.models.TransactionHistory;
+        await TransactionHistory.create({
+            transaction_state: transaction.transaction_state,
+            transaction_id: transaction.transaction_id,
+            transaction_date: transaction.transaction_date
+        })
+    })
 
     return Transaction;
 };
