@@ -88,12 +88,10 @@ module.exports = function (Service) {
                 })
                     .then(async response => {
                         if (!response.ok) {
-                            return res.sendStatus(500);
-                            res.status(422).json({ urlFailed: req.user.redirectUrlCancellation });
+                            return res.status(422).json({ urlFailed: req.user.redirectUrlCancellation });
                         } else {
                             const service = await Service.pay({ ...{ clientData: req.body }, id: req.params.id, operation_id: operation.dataValues.operation_id });
-                            return res.sendStatus(500);
-                            res.json({ confirmationUrl: req.user.redirectUrlConfirmation });
+                            return res.json({ confirmationUrl: req.user.redirectUrlConfirmation });
                         }
                     })
                     .catch(error => {

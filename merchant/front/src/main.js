@@ -1,6 +1,7 @@
 import "./assets/index.css";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import PaymentForm from "@/plugins/PaymentForm/PaymentForm";
 import router from "./router";
 import App from "./App.vue";
 
