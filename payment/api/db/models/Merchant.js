@@ -9,7 +9,7 @@ module.exports = function (connection) {
 
         generateToken() {
             const jwt = require("jsonwebtoken");
-            return jwt.sign({ id: this.id }, process.env.JWT_SECRET, {
+            return jwt.sign({ id: this.merchant_id }, process.env.JWT_SECRET, {
                 expiresIn: "1y",
             });
         }
@@ -49,10 +49,6 @@ module.exports = function (connection) {
                 len: {
                     args: [8],
                     msg: "Password must be at least 8 characters long",
-                },
-                is: {
-                    args: /[a-z]/,
-                    msg: "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character",
                 },
             },
         },

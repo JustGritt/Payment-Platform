@@ -1,3 +1,46 @@
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import apiService from '../services/apiService'
+import { userState } from '../contexts/User'
+
+// Get the user data from localStorage and parse it as an object
+const user = JSON.parse(localStorage.getItem("user") || "{}")
+
+// Convert user to a reactive reference using ref
+const userRef = ref(user)
+
+// Create computed properties for clientToken and clientSecret
+const clientToken = computed(() => userRef.value.client_token)
+const clientSecret = computed(() => userRef.value.client_secret)
+
+const regenerateToken = () => {
+  apiService.regenerateToken()
+    .then((response) => {
+      console.log(response)
+      // Update the userRef with the new values
+      userRef.value = { ...userRef.value, client_token: response.client_token, client_secret: response.client_secret }
+
+      // Update the userState with the new values
+      userState.user = { ...userState.user, client_token: response.client_token, client_secret: response.client_secret }
+
+      // Update the values in localStorage
+      localStorage.setItem("user", JSON.stringify(userRef.value))
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
+// On component mount, update the localStorage if it's in the nested string format
+onMounted(() => {
+  if (typeof userRef.value === 'string') {
+    localStorage.setItem("user", userRef.value);
+  }
+})
+</script>
+
+
+
 <template>
   <aside class="w-full px-9 mt-8 h-auto overflow-scroll">
     <h3 class="font-blooming text-4xl leading-none">Paramètres</h3>
@@ -342,9 +385,56 @@
                 >
                   Enregistrer
                 </button>
+
               </div>
             </div>
           </form>
+        </div>
+
+        <div
+          class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800"
+        >
+          <div class="flow-root">
+            <h3 class="text-xl font-semibold dark:text-white">Vos Tokens</h3>
+            <div class="col-span-6 sm:col-span-3">
+                <label
+                  for="confirm-password"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >Client Token</label
+                >
+                <input
+                  v-model="clientToken"
+                  type="text"
+                  name="clientToken"
+                  id="clientToken"
+                  class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="••••••••"
+                  disabled
+                />
+              </div>
+
+              <div class="col-span-6 sm:col-span-3">
+                <label
+                  for="confirm-password"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >Client Secret</label
+                >
+                <input
+                  v-model="clientSecret"
+                  type="text"
+                  name="clientSecret"
+                  id="clientSecret"
+                  class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="••••••••"
+                  disabled
+
+                />
+              </div>
+
+              <button @click="regenerateToken()">
+                Regenerer
+              </button>
+          </div>
         </div>
 
         <div
@@ -439,6 +529,13 @@
   </aside>
 </template>
 
-<style></style>
-
-<script></script>
+<style>
+    .formkit-form {
+        max-width: none;
+        width: 100%;
+        min-height: auto;
+        box-shadow: none;
+        border-radius: 0px;
+        padding-bottom: 0px;
+    }
+</style>

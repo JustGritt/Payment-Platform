@@ -59,6 +59,7 @@ const sendAdminLogin = (data) => {
       if (response.status === 200) {
         userState.user = response.data.user;
         userState.role = response.data.user.role || 'user';
+        userState.token = response.data.token;
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         router.push({ name: 'home' });
@@ -75,6 +76,8 @@ const sendLogin = (data) => {
       if (response.status === 200) {
         userState.user = response.data.user;
         userState.role = response.data.user.role || 'user';
+        userState.token = response.data.token;
+        console.log(userState)
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         router.push({ name: 'home' });

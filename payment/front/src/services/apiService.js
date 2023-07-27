@@ -3,17 +3,18 @@ import axios from "axios";
 import { userState } from "../contexts/User";
 
 const apiClient = axios.create({
-  baseURL: "https://api.strapouz.com", // Remplacez cette URL par l'URL de votre serveur API
+  baseURL: "http://localhost:3000", // Remplacez cette URL par l'URL de votre serveur API
   headers: {
     "Content-Type": "application/json",
 
   },
 });
 
-apiClient.interceptors.request.use(config => {
-  config.headers.Authorization = `Bearer ${userState.token}`;
-  return config;
-});
+
+// apiClient.interceptors.request.use(config => {
+//   config.headers.Authorization = `Bearer ${userState.token}`;
+//   return config;
+// });
 
 export default {
   // Ajoutez ici les fonctions pour appeler les différentes routes de votre API
@@ -54,6 +55,22 @@ export default {
     } catch (error) {
       throw error;
     }
-  }
- 
+  },
+
+  regenerateToken: async () => {
+    try {
+
+        apiClient.interceptors.request.use(config => {
+          console.log(userState.token)
+          config.headers.Authorization = `Bearer ${userState.token}`;
+          return config;
+        });
+
+      const response = await apiClient.get("/regenerateToken");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
 };
