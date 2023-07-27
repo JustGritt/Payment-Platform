@@ -1,204 +1,663 @@
+<script setup>
+import { ref, watch, computed } from 'vue';
+import Valid from '@/assets/icons/Valid.vue';
+import Invalid from '@/assets/icons/Invalid.vue';
+
+const password = ref('');
+
+// Password validation properties
+const validPassword = {
+    pwlength: false,
+    pwuppercase: false,
+    pwnumber: false,
+    pwspecial: false,
+};
+
+// Watch password
+watch(password, (value) => {
+    validPassword.pwlength = value.length >= 8;
+    validPassword.pwuppercase = value.match(/[A-Z]/) !== null;
+    validPassword.pwlowercase = value.match(/[a-z]/) !== null;
+    validPassword.pwnumber = value.match(/[0-9]/) !== null;
+    validPassword.pwspecial = value.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/) !== null;
+});
+
+</script>
+
+
 <template>
     <aside class="w-full px-9 mt-8 h-auto overflow-scroll">
         <h3 class="font-blooming text-4xl leading-none">S'inscrire</h3>
 
         <section class="w-full mt-6 py-2">
             <div class="col-span-2">
+
+                <div v-if="submitted">
+                    <h2>Submission successful!</h2>
+                </div>
+
                 <div
                     class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
                     <h3 class="mb-4 text-xl font-semibold dark:text-white">
                         Informations sur votre entreprise
                     </h3>
-                    <form @submit.prevent="registerMerchant">
+
+                    <FormKit type="form"
+                        id="registration-exemple"
+                        :form-class="submitted ? 'hide' : 'show'"
+                        submit-label="Register"
+                        @submit="registerMerchant"
+                        :actions="false">
+                        <!-- <form @submit.prevent="registerMerchant"> -->
                         <div class="grid grid-cols-6 gap-6">
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="company-name"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom de
-                                    l'entreprise</label>
-                                <input v-model="companyName" type="text" name="company-name" id="company-name"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Stripouz" required />
+                                <FormKit v-model="companyName" type="text" name="company-name" id="company-name" label="Nom de l'entreprise" placeholder="Amazon" validation="required|text|between:1,50"
+                                :input-class="{
+                                        'shadow-sm': true,
+                                        'bg-gray-50': true,
+                                        'border': true,
+                                        'border-gray-300': true,
+                                        'text-gray-900': true,
+                                        'sm:text-sm': true,
+                                        'rounded-lg': true,
+                                        'focus:ring-primary-500': true,
+                                        'focus:border-primary-500': true,
+                                        'block': true,
+                                        'w-full': true,
+                                        'p-2.5': true,
+                                        'mt-2': true,
+                                        'dark:bg-gray-700': true,
+                                        'dark:border-gray-600': true,
+                                        'dark:placeholder-gray-400': true,
+                                        'dark:text-white': true,
+                                        'dark:focus:ring-primary-500': true,
+                                        'dark:focus:border-primary-500': true,
+                                    }"
+                                />
                             </div>
+
+                            <!-- Email de contact -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="email"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email de
-                                    contact</label>
-                                <input v-model="email" type="email" name="email" id="email"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="exemple@company.fr" required />
+                                <FormKit
+                                    v-model="email"
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    label="Email de contact"
+                                    placeholder="exemple@mail.fr"
+                                    validation="required|email"
+                                    :input-class="{
+                                        'shadow-sm': true,
+                                        'bg-gray-50': true,
+                                        'border': true,
+                                        'border-gray-300': true,
+                                        'text-gray-900': true,
+                                        'sm:text-sm': true,
+                                        'rounded-lg': true,
+                                        'focus:ring-primary-500': true,
+                                        'focus:border-primary-500': true,
+                                        'block': true,
+                                        'w-full': true,
+                                        'p-2.5': true,
+                                        'mt-2': true,
+                                        'dark:bg-gray-700': true,
+                                        'dark:border-gray-600': true,
+                                        'dark:placeholder-gray-400': true,
+                                        'dark:text-white': true,
+                                        'dark:focus:ring-primary-500': true,
+                                        'dark:focus:border-primary-500': true
+                                    }"
+                                    required
+                                />
                             </div>
+
+                            <!-- Mot de passe -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="current-password"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mot de
-                                    passe</label>
-                                <input type="password" v-model="password" name="current-password" id="current-password"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="••••••••" required />
+                                <FormKit
+                                    type="password"
+                                    name="current-password"
+                                    id="current-password"
+                                    label="Mot de passe"
+                                    placeholder="••••••••"
+                                    validation="required|+length:8"
+                                    :validation-messages="{
+                                        length: 'Le mot de passe doit être supérieur à 8 caractères',
+                                    }"
+
+                                    :input-class="{
+                                        'shadow-sm': true,
+                                        'bg-gray-50': true,
+                                        'border': true,
+                                        'border-gray-300': true,
+                                        'text-gray-900': true,
+                                        'sm:text-sm': true,
+                                        'rounded-lg': true,
+                                        'focus:ring-primary-500': true,
+                                        'focus:border-primary-500': true,
+                                        'block': true,
+                                        'w-full': true,
+                                        'p-2.5': true,
+                                        'mt-2': true,
+                                        'dark:bg-gray-700': true,
+                                        'dark:border-gray-600': true,
+                                        'dark:placeholder-gray-400': true,
+                                        'dark:text-white': true,
+                                        'dark:focus:ring-primary-500': true,
+                                        'dark:focus:border-primary-500': true
+                                    }"
+                                    required
+                                />
                             </div>
+
+                            <!-- Confirmation de mot de passe -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="password"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirmation de
-                                    mot de passe</label>
-                                <input type="password" v-model="confirmPassword" name="password" id="password"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="••••••••" required />
-                                <div data-popover id="popover-password" role="tooltip"
-                                    class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
-                                    class="absolute z-10 invisible inline-block text-sm font-light text-gray-500
-                                    transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm
-                                    opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
-                                    <div class="p-3 space-y-2">
-                                        <h3 class="font-semibold text-gray-900 dark:text-white">
-                                            Mot de passe doit contenir au moins 6 caractères
-                                        </h3>
-                                        <div class="grid grid-cols-4 gap-2">
-                                            <div class="h-1 bg-orange-300 dark:bg-orange-400"></div>
-                                            <div class="h-1 bg-orange-300 dark:bg-orange-400"></div>
-                                            <div class="h-1 bg-gray-200 dark:bg-gray-600"></div>
-                                            <div class="h-1 bg-gray-200 dark:bg-gray-600"></div>
-                                        </div>
-                                        <p>Votre mot de passe doit contenir:</p>
-                                        <ul>
-                                            <li class="flex items-center mb-1">
-                                                <svg class="w-4 h-4 mr-2 text-green-400 dark:text-green-500"
-                                                    aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd"
-                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                        clip-rule="evenodd"></path>
-                                                </svg>
-                                                Une lettre majuscule et minuscule
-                                            </li>
-                                            <li class="flex items-center mb-1">
-                                                <svg class="w-4 h-4 mr-2 text-gray-300 dark:text-gray-400"
-                                                    aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd"
-                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd"></path>
-                                                </svg>
-                                                Un caractère spécial (#$&)
-                                            </li>
-                                            <li class="flex items-center">
-                                                <svg class="w-4 h-4 mr-2 text-gray-300 dark:text-gray-400"
-                                                    aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd"
-                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd"></path>
-                                                </svg>
-                                                Le mot de passe doit contenir au moins 12 caractères
-                                            </li>
-                                        </ul>
+                                <FormKit
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    validation="required|confirm"
+                                    validation-visibility="live"
+                                    label="Confirmation de mot de passe"
+                                    placeholder="••••••••"
+                                    :validation-messages="{
+                                        length: 'Le mot de passe ne correspond pas',
+                                    }"
+                                    :input-class="{
+                                        'relative': true,
+                                        'shadow-sm': true,
+                                        'bg-gray-50': true,
+                                        'border': true,
+                                        'border-gray-300': true,
+                                        'text-gray-900': true,
+                                        'sm:text-sm': true,
+                                        'rounded-lg': true,
+                                        'focus:ring-primary-500': true,
+                                        'focus:border-primary-500': true,
+                                        'block': true,
+                                        'w-full': true,
+                                        'p-2.5': true,
+                                        'mt-2': true,
+                                        'dark:bg-gray-700': true,
+                                        'dark:border-gray-600': true,
+                                        'dark:placeholder-gray-400': true,
+                                        'dark:text-white': true,
+                                        'dark:focus:ring-primary-500': true,
+                                        'dark:focus:border-primary-500': true
+                                    }"
+                                    required
+                                />
+                            </div>
+
+                            <div class="col-span-6 sm:col-span-6" v-show="password">
+                                <div class="p-3 space-y-2">
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">
+                                        Mot de passe doit contenir au moins 8 caractères
+                                    </h3>
+                                    <div class="grid grid-cols-4 gap-2">
+                                        <div :class="{ 'bg-orange-300 dark:bg-orange-400': (validPassword.pwuppercase && validPassword.pwlowercase), 'bg-gray-200 dark:bg-gray-600': !(validPassword.pwuppercase && validPassword.pwlowercase) }" class="h-1"></div>
+                                        <div :class="{ 'bg-orange-300 dark:bg-orange-400': validPassword.pwspecial, 'bg-gray-200 dark:bg-gray-600': !validPassword.pwspecial }" class="h-1"></div>
+                                        <div :class="{ 'bg-orange-300 dark:bg-orange-400': validPassword.pwnumber, 'bg-gray-200 dark:bg-gray-600': !validPassword.pwnumber }" class="h-1"></div>
+                                        <div :class="{ 'bg-orange-300 dark:bg-orange-400': validPassword.pwlength, 'bg-gray-200 dark:bg-gray-600': !validPassword.pwlength }" class="h-1"></div>
                                     </div>
-                                    <div data-popper-arrow></div>
+                                    <p>Votre mot de passe doit contenir:</p>
+                                    <ul>
+                                        <li class="flex items-center mb-1">
+                                            <Valid v-if="validPassword.pwuppercase && validPassword.pwlowercase" />
+                                            <Invalid v-else />
+                                            Une lettre majuscule et minuscule
+                                        </li>
+                                        <li class="flex items-center mb-1">
+                                            <Valid v-if="validPassword.pwspecial" />
+                                            <Invalid v-else />
+                                            Un caractère spécial (#$&)
+                                        </li>
+                                        <li class="flex items-center mb-1">
+                                            <Valid v-if="validPassword.pwnumber" />
+                                            <Invalid v-else />
+                                            Le mot de passe doit contenir au moins un chiffre
+                                        </li>
+                                        <li class="flex items-center">
+                                            <Valid v-if="validPassword.pwlength" />
+                                            <Invalid v-else />
+                                            Le mot de passe doit contenir au moins 8 caractères
+                                        </li>
+                                    </ul>
                                 </div>
+                                <div data-popper-arrow></div>
                             </div>
+
+                            <!-- Pays -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="country"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pays</label>
-                                <input type="text" v-model="country" name="country" id="country"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="France" required />
+                                <FormKit
+                                    v-model="country"
+                                    type="text"
+                                    name="country"
+                                    id="country"
+                                    label="Pays"
+                                    placeholder="France"
+                                    validation="required|?length:2"
+                                    :validation-messages="{
+                                        length: 'Entrez un pays valide',
+                                    }"
+                                    :input-class="{
+                                        'shadow-sm': true,
+                                        'bg-gray-50': true,
+                                        'border': true,
+                                        'border-gray-300': true,
+                                        'text-gray-900': true,
+                                        'sm:text-sm': true,
+                                        'rounded-lg': true,
+                                        'focus:ring-primary-500': true,
+                                        'focus:border-primary-500': true,
+                                        'block': true,
+                                        'w-full': true,
+                                        'p-2.5': true,
+                                        'mt-2': true,
+                                        'dark:bg-gray-700': true,
+                                        'dark:border-gray-600': true,
+                                        'dark:placeholder-gray-400': true,
+                                        'dark:text-white': true,
+                                        'dark:focus:ring-primary-500': true,
+                                        'dark:focus:border-primary-500': true
+                                    }"
+                                    required
+                                />
                             </div>
+
+                            <!-- Ville -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="city"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ville</label>
-                                <input type="text" v-model="city" name="city" id="city"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Paris" required />
+                                <FormKit
+                                    v-model="city"
+                                    type="text"
+                                    name="city"
+                                    id="city"
+                                    label="Ville"
+                                    placeholder="Paris"
+                                    validation="required|?length:2"
+                                    :validation-messages="{
+                                        length: 'Entrez une ville valide',
+                                    }"
+                                    :input-class="{
+                                        'shadow-sm': true,
+                                        'bg-gray-50': true,
+                                        'border': true,
+                                        'border-gray-300': true,
+                                        'text-gray-900': true,
+                                        'sm:text-sm': true,
+                                        'rounded-lg': true,
+                                        'focus:ring-primary-500': true,
+                                        'focus:border-primary-500': true,
+                                        'block': true,
+                                        'w-full': true,
+                                        'p-2.5': true,
+                                        'mt-2': true,
+                                        'dark:bg-gray-700': true,
+                                        'dark:border-gray-600': true,
+                                        'dark:placeholder-gray-400': true,
+                                        'dark:text-white': true,
+                                        'dark:focus:ring-primary-500': true,
+                                        'dark:focus:border-primary-500': true
+                                    }"
+                                    required
+                                />
                             </div>
+
+                            <!-- Adresse -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="address"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse</label>
-                                <input type="text" v-model="address" name="address" id="address"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="242 rue Faubourg Saint-Antoine" required />
+                                <FormKit v-model="address" type="text" name="address" id="address" label="Adresse"
+                                placeholder="242 rue Faubourg Saint-Antoine"
+                                validation="required|?length:2"
+                                :validation-messages="{
+                                    length: 'Entrez une adresse valide',
+                                }"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" required />
                             </div>
+
+                            <!-- Numéro de téléphone -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="phone-number"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Numéro de
-                                    téléphone</label>
-                                <input type="tel" v-model="phoneNumber" name="phone-number" id="phone-number"
-                                    pattern="[0-9]{10}"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="+(33) 01 23 45 67 89"  />
+                                <FormKit v-model="phoneNumber" type="tel" name="phone-number" id="phone-number"
+                                pattern="[0-9]{10}"
+                                label="Numéro de téléphone"
+                                placeholder="+(33) 01 23 45 67 89"
+                                validation="matches:/^[0-9]{10}$/|?length:2"
+                                :validation-messages="{
+                                    matches: 'Le numéro de téléphone est au mauvais format',
+                                }"
+                                validation-visibility="dirty"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" />
                             </div>
+
+                            <!-- Code postal -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="zip-code"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Code
-                                    postal</label>
-                                <input type="number" v-model="zipCode" name="zip-code" id="zip-code"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="123456" required />
+                                <FormKit v-model="zipCode" type="number" name="zip-code" id="zip-code"
+                                label="Code postal"
+                                placeholder="123456"
+                                validation="matches:/^[0-9]{5}$/"
+                                :validation-messages="{
+                                    matches: 'Le code postal est au mauvais format',
+                                }"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" required />
                             </div>
+
+                            <!-- Numéro KBIS -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="kbis"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Numéro
-                                    KBIS</label>
-                                <input v-model="kbis" type="text" name="kbis" id="kbis"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Numéro KBIS" required />
+                                <FormKit v-model="kbis" type="text" name="kbis" id="kbis" label="Numéro KBIS"
+                                placeholder="Numéro KBIS"
+                                validation="matches:/^\d{3}\s\d{3}\s\d{3}\s00035$/"
+                                :validation-messages="{
+                                    matches: 'Le numéro KBIS est au mauvais format',
+                                }"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" required />
                             </div>
+
+                            <!-- URL d'annulation -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="cancellationUrl"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    URL d'anulation</label>
-                                <input type="text" v-model="cancellationUrl" name="CancellationUrl" id="CancellationUrl"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    required />
+                                <FormKit v-model="cancellationUrl" type="text" name="CancellationUrl"
+                                id="CancellationUrl"
+                                label="URL d'annulation"
+                                placeholder="https://www.exemple.com"
+                                validation="url"
+                                :validation-messages="{
+                                    matches: 'Entrez une URL valide',
+                                }"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" required />
                             </div>
+
+                            <!-- URL de confirmation -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="confirmationUrl"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    URL de confirmation</label>
-                                <input v-model="confirmationUrl" type="text" name="confirmationUrl" id="confirmationUrl"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    required />
+                                <FormKit v-model="confirmationUrl" type="text" name="confirmationUrl"
+                                id="confirmationUrl"
+                                label="URL de confirmation"
+                                placeholder="https://www.exemple.com"
+                                validation="url"
+                                :validation-messages="{
+                                    matches: 'Entrez une URL valide',
+                                }"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" required />
                             </div>
                         </div>
+
+
                         <h3 class="mt-4 w-full text-xl font-semibold dark:text-white">
                             Informations de contact
                         </h3>
                         <div class="grid grid-cols-6 gap-6">
+
+                            <!-- Nom de contact -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="lastname"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom de
-                                    contact</label>
-                                <input type="text" v-model="LastName" name="lastname" id="lastname"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="John" required />
+                                <FormKit v-model="LastName" type="text" name="lastname" id="lastname"
+                                label="Nom de contact"
+                                placeholder="John"
+                                validation="required|text|between:1,50"
+                                :validation-messages="{
+                                    length: 'Entrez un nom valide',
+                                }"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" required />
                             </div>
+
+                            <!-- Prénom de contact -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="firstname"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prénom
-                                    de
-                                    contact</label>
-                                <input type="text" v-model="FirstName" name="firstname" id="firstname"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Doe" required />
+                                <FormKit v-model="FirstName" type="text" name="firstname" id="firstname"
+                                label="Prénom de contact"
+                                placeholder="Doe"
+                                validation="required|text|between:1,50"
+                                :validation-messages="{
+                                    length: 'Entrez un prénom valide',
+                                }"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" required />
                             </div>
+
+                            <!-- Rôle -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="role"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Rôle</label>
-                                <input type="text" v-model="role" name="role" id="role"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Responsable des communications" required />
+                                <FormKit v-model="role" type="text" name="role" id="role" label="Rôle" placeholder="Responsable des communications"
+                                validation="?text|between:2,50"
+                                :validation-messages="{
+                                    length: 'Entrez un rôle valide',
+                                }"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" required />
                             </div>
+
+                            <!-- Département -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="department"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Département</label>
-                                <input type="text" v-model="department" name="department" id="department"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Ventes" required />
+                                <FormKit v-model="department" type="text" name="department" id="department"
+                                label="Département"
+                                placeholder="Ventes"
+                                validation="?text|between:2,50"
+                                :validation-messages="{
+                                    length: 'Entrez un département valide',
+                                }"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" required />
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
-                                <label for="Email"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email de contact</label>
-                                <input type="email" v-model="contactEmail" name="contactEmail" id="contactEmail"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Email de contact" required />
+
+                            <!-- Email de contact -->
+                            <div class="col-span-6 sm:col-full">
+                                <FormKit v-model="contactEmail" type="email" name="contactEmail" id="contactEmail"
+                                label="Email de contact"
+                                validation="required|email"
+                                placeholder="Email de contact"
+                                :input-class="{
+                                'shadow-sm': true,
+                                'bg-gray-50': true,
+                                'border': true,
+                                'border-gray-300': true,
+                                'text-gray-900': true,
+                                'sm:text-sm': true,
+                                'rounded-lg': true,
+                                'focus:ring-primary-500': true,
+                                'focus:border-primary-500': true,
+                                'block': true,
+                                'w-full': true,
+                                'p-2.5': true,
+                                'mt-2': true,
+                                'dark:bg-gray-700': true,
+                                'dark:border-gray-600': true,
+                                'dark:placeholder-gray-400': true,
+                                'dark:text-white': true,
+                                'dark:focus:ring-primary-500': true,
+                                'dark:focus:border-primary-500': true
+                                }" required />
                             </div>
+
                             <div class="col-span-6 sm:col-full">
                                 <button
                                     class="px-3 py-2 my-3 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
@@ -207,79 +666,21 @@
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    <!-- </form> -->
+                    </FormKit>
                 </div>
             </div>
         </section>
     </aside>
 </template>
 
-
-<script>
-    // Importez le service API
-    import apiService from "@/services/apiService";
-    import route from "../router";
-
-    export default {
-        data() {
-            return {
-                companyName: "",
-                email: "",
-                password: "",
-                confirmPassword: "",
-                FirstName: "",
-                LastName: "",
-                role: "",
-                department: "",
-                country: "",
-                city: "",
-                address: "",
-                phoneNumber: "",
-                zipCode: "",
-                kbis: "",
-                contactEmail: "",
-                cancellationUrl: "",
-                confirmationUrl: "",
-            };
-        },
-        methods: {
-            async registerMerchant() {
-                try {
-                    // Données du formulaire
-                    const merchantData = {
-                        name: this.companyName,
-                        email: this.email,
-                        kbis: this.kbis,
-                        redirectUrlConfirmation: this.confirmationUrl,
-                        redirectUrlCancellation: this.cancellationUrl,
-                        password: this.password,
-                    };
-
-                   
-                    // Données du formulaire de contact
-                    const contactData = {
-                        firstname: this.FirstName,
-                        lastname: this.LastName,
-                        email: this.contactEmail,
-                        // Ajoutez d'autres propriétés ici...
-                    };
-
-                    const data = {
-                        merchantData: merchantData,
-                        contactData: contactData,
-                    };
-
-                    // Appelez la fonction d'enregistrement du marchand du service API en passant les données complètes
-                    const newMerchant = await apiService.registerMerchant(data);
-
-                    if (newMerchant) {
-                       route.push("/login");
-                    }
-                    // Traitement des étapes suivantes après l'enregistrement réussi (par exemple, afficher un message de succès)
-                } catch (error) {
-                    console.error(error);
-                }
-            },
-        },
-    };
-</script>
+<style>
+    .formkit-form {
+        max-width: none;
+        width: 100%;
+        min-height: auto;
+        box-shadow: none;
+        border-radius: 0px;
+        padding-bottom: 0px;
+    }
+</style>
