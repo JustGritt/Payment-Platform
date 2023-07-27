@@ -5,7 +5,6 @@ const userState = reactive({
   token: localStorage.getItem('token'),
 });
 
-
 function logout() {
   userState.user = null;
   userState.role = null;

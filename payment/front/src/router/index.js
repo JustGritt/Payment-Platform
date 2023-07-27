@@ -22,22 +22,34 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: () => import('../views/AboutView.vue'),
+      meta: { requiresAuth: true },
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('../views/LoginView.vue'),
+      path: '/merchant',
+      name: 'merchant',
+      component: () => import('../views/ValidateMerchantView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/users',
       name: 'users',
       component: () => import('../views/InpersonateView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/settings',
       name: 'settings',
       component: () => import('../views/SettingsView.vue'),
+      meta: { requiresAuth: true },
     },
+    {
+      path: '/transactions',
+      name: 'transactions',
+      component: () => import('../views/TransactionsView.vue'),
+      meta: { requiresAuth: true },
+    },
+
+
     {
       path: '/admin404',
       name: 'admin404',
@@ -47,6 +59,11 @@ const router = createRouter({
       path: '/register',
       name: 'Register',
       component: () => import('../views/RegisterView.vue'),
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
     },
   ],
 });
