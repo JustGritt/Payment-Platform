@@ -17,10 +17,11 @@ const { amount, currency, meta } = defineProps(['amount', 'currency', 'meta']);
 if (!amount || !currency) throw new Error('amount is required')
 const TVA = (20 / 100);
 const amount_value = (parseInt(amount) + (parseInt(amount) * TVA));
-console.log(amount_value);
 const modalActive = ref(false);
 const submitting = ref(false);
 const transaction = ref(null);
+
+
 const CLIENT_ID = localStorage.getItem('clientId');
 const CLIENT_TOKEN = localStorage.getItem('clientToken');
 const credentialsB64 = encodeToBase64(`${CLIENT_ID}:${CLIENT_TOKEN}`)
@@ -56,8 +57,8 @@ const onSubmit = async (data) => {
     try {
         const response = await performHttpCall(`/transactions/${transaction.value.transaction_id}/operation/pay`, 'POST', { ...data, amount: amount_value }, `Basic: ${credentialsB64}`)
         submitting.value = false
-        if (response.redirectUrlConfirmation)
-            location.replace(response.redirectUrlConfirmation)
+        if (response.confirmationUrl)
+            location.replace(response.confirmationUrl)
     } catch (error) {
         if (Object.keys(error).includes('urlFailed')) {
             if (error.urlFailed) {
