@@ -23,7 +23,19 @@ module.exports = function (Service) {
             }
         },
         getAll: async (req, res, next) => {
-
+            console.log(req.user)
+            try {
+                if(req.user.role === "admin") {
+                    const transaction = await Service.findAll();
+                    res.json(transaction);
+                }
+                else {
+                    const transaction = await Service.findAll({ merchant_id: req.user.id });
+                    res.json(transaction);
+                }
+            } catch (err) {
+                next(err);
+            }
         },
         cancel: async (req, res, next) => {
             try {

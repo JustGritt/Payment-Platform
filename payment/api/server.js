@@ -40,7 +40,7 @@ app.use(require("./routes/security")(merchantService, contactService));
 app.use("/users", new GenericRouter(new GenericController(userService)));
 app.use("/merchants", authentificationGuard({JWTAuth: true}), new GenericRouter(new GenericController(merchantService)));
 app.use("/operations", new GenericRouter(new GenericController(operationService)));
-app.use("/transactions", authentificationGuard({ BasicAuth: true }), new TransactionRouter(new TransactionController(transactionService)));
+app.use("/transactions", authentificationGuard({ JWTAuth: true, BasicAuth: true}), new TransactionRouter(new TransactionController(transactionService)));
 
 app.get("/", (req, res) => {
   res.send("Hello World");
