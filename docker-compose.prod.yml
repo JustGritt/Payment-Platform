@@ -33,7 +33,7 @@ services:
       - POSTMARK_API_TOKEN=${POSTMARK_API_TOKEN}
       - POSTMARK_FROM=${POSTMARK_FROM}
       - PSP_URL=${PSP_URL}
-      - MONGO_URL=${PSP_URL}
+      - MONGO_URL=${MONGO_URL}
     ports:
       - "${BACK_PORT:-3000}:${BACK_PORT:-3000}" 
     container_name: node-api
