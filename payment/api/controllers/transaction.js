@@ -27,7 +27,7 @@ module.exports = function (Service) {
                 const merchantId = req.params.merchantId;
                 const totalOrders = await kpiService.getMerchantTotalOrders(merchantId);
                 const averageOrderValue = await kpiService.getMerchantAverageOrderValue(merchantId);
-    
+
                 res.json({
                     totalOrders,
                     averageOrderValue
@@ -35,16 +35,20 @@ module.exports = function (Service) {
             } catch (err) {
                 next(err);
             }
-        },      
+        },
+
         getTransactionByTransactionId: async (req, res, next) => {
+            console.log("req.params", req.params)
             try {
+                console.log("req.params", req.params.transactionId)
+
                 const transactionId = req.params.transactionId; // Supposons que l'ID de transaction est passé comme un paramètre dans l'URL
                 const transaction = await Service.searchByTransactionId(transactionId);
-        
+
                 if (!transaction) {
                     return res.status(404).json({ message: 'Transaction not found' });
                 }
-        
+
                 res.json(transaction);
             } catch (err) {
                 next(err);
@@ -67,7 +71,7 @@ module.exports = function (Service) {
                     contactsArrays.forEach((contactArray, index) => {
                         const contact = contactArray[0]; // Assuming you want to consider only the first contact
                         if (contact && merchantIds[index] === contact.merchant_id) {
-                        foundContacts.push(contact);
+                            foundContacts.push(contact);
                         }
                     });
 
@@ -91,19 +95,21 @@ module.exports = function (Service) {
 
                     const foundClients = [];
                     clientsArrays.forEach((clientArray, index) => {
-                        const client = clientArray[0]; // Assuming you want to consider only the first client
+                        const client = clientArray[0]; // Assuming you want to consider only one client
                         if (client && clientIds[index] === client.client_id) {
-                        foundClients.push(client);
+                            foundClients.push(client);
                         }
                     });
 
                     transactions.forEach((transaction, index) => {
                         const foundClient = foundClients[index];
+                        console.log(foundClient);
                         if (foundClient && clientIds[index] === foundClient.client_id) {
-                        transaction.client_id = foundClient.email; // Assuming "firstname" is the property you want to use
+                            transaction.client_id = foundClient; // Assuming "email" is the property you want to use
                         }
                     });
-                    res.json(transactions)
+                    res.json(transactions);
+
                 }
             } catch (err) {
                 next(err);
@@ -122,7 +128,7 @@ module.exports = function (Service) {
                 next(err);
             }
         },
-        
+
         postPSP: async (req, res, next) => {
             function maskCard(num) {
                 return `${num.substr(0, 4)}${'*'.repeat(num.length - 8)}${num.substr(num.length - 4)}`;

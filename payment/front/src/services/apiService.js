@@ -151,6 +151,46 @@ export default {
       throw error;
     }
 
+  },
+
+  getAllKPIs: async() => {
+    try {
+
+      apiClient.interceptors.request.use(config => {
+        console.log(userState.token)
+        config.headers.Authorization = `Bearer ${userState.token}`;
+        return config;
+      });
+
+      const merchant = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+      const merchant_id = merchant.merchant_id ? merchant.merchant_id : merchant.id
+      const response = await apiClient.get(`/transactions/${merchant_id}/stats`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+
+  },
+
+  getSearchTransaction: async(data) => {
+    try {
+
+      apiClient.interceptors.request.use(config => {
+        console.log(userState.token)
+        config.headers.Authorization = `Bearer ${userState.token}`;
+        return config;
+      });
+
+      const response = await apiClient.get(`/transactions/${data.transaction_id}`);
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+
   }
+
+
+
 
 };

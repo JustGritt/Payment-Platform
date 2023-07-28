@@ -119,7 +119,7 @@ module.exports = function (connection) {
         })
     })
 
-
+    Transaction.addHook("afterUpdate", async (transaction, options) => {
         const db = getDb();
         const collection = db.collection('transactions');
     
