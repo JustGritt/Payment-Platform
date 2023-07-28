@@ -148,7 +148,7 @@ import TransactionEntry from "@/components/components/TransactionEntry.vue";
 											</tr>
 										</thead>
 										<tbody class="bg-white dark:bg-gray-800">
-											<TransactionEntry transactionType="Paiement" clientName="John Doe"
+											<!-- <TransactionEntry transactionType="Paiement" clientName="John Doe"
 												transactionDate="20/04/2023" amount="1900€" referenceNumber="0047568936"
 												paymentMethod="MasterCard" creditCardLastFourDigits="1234" status="Completed" />
 
@@ -162,7 +162,7 @@ import TransactionEntry from "@/components/components/TransactionEntry.vue";
 
 											<TransactionEntry transactionType="Remboursement" clientName="John Doe"
 												transactionDate="20/04/2023" amount="-1900€" referenceNumber="0047568936"
-												paymentMethod="Visa" creditCardLastFourDigits="1234" status="Progress" />
+												paymentMethod="Visa" creditCardLastFourDigits="1234" status="Progress" /> -->
 										</tbody>
 									</table>
 								</div>

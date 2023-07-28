@@ -15,6 +15,4 @@ app.provide('userState', userState);
 app.config.globalProperties.$apexcharts = VueApexCharts;
 app.use(plugin, defaultConfig(config)) 
 
-
 app.mount('#app')
-

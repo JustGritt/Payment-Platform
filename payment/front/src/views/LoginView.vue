@@ -35,7 +35,7 @@
     </div>
   </div>
 </template>
-  
+
 <script setup>
 import { ref, inject } from 'vue';
 import router from "../router";
@@ -45,7 +45,7 @@ import { userState } from '../contexts/User'; // Import userState here
 const email = ref('');
 const password = ref('');
 
-//check if the route is admin or login 
+//check if the route is admin or login
 const checkRoute = () => {
   if (router.currentRoute.value.name === 'login') {
     return true;
@@ -57,6 +57,7 @@ const sendAdminLogin = (data) => {
   apiService.adminLogin(data)
     .then((response) => {
       if (response.status === 200) {
+        // Map the user data to the userState
         userState.user = response.data.user;
         userState.role = response.data.user.role || 'user';
         userState.token = response.data.token;
@@ -97,4 +98,3 @@ const handleSubmit = (event) => {
   checkRoute() ? sendLogin(data) : sendAdminLogin(data);
 };
 </script>
-  

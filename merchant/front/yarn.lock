@@ -25,6 +25,11 @@
     escape-string-regexp "^4.0.0"
     rollup-plugin-node-polyfills "^0.2.1"
 
+"@esbuild/darwin-x64@0.17.19":
+  version "0.17.19"
+  resolved "https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.17.19.tgz"
+  integrity sha512-IJM4JJsLhRYr9xdtLytPLSH9k/oxR3boaUIYiHkAawtwNOXKE8KoU8tMvryogdcT8AU+Bflmh81Xn6Q0vTZbQw==
+
 "@eslint-community/eslint-utils@^4.2.0", "@eslint-community/eslint-utils@^4.3.0":
   version "4.4.0"
   resolved "https://registry.npmjs.org/@eslint-community/eslint-utils/-/eslint-utils-4.4.0.tgz"
@@ -1658,11 +1663,6 @@ vue-credit-card-validation@1.0.5:
   version "1.0.5"
   resolved "https://registry.npmjs.org/vue-credit-card-validation/-/vue-credit-card-validation-1.0.5.tgz"
   integrity sha512-FtoIreB5H+MPzY54E087yt2XoH5D66mO5gTVZrBLbw6AT1gYfapv61kZdMKKQxD7IBzNZ+wfDDOG6rZVBGfHcg==
-
-vue-demi@*:
-  version "0.14.5"
-  resolved "https://registry.npmjs.org/vue-demi/-/vue-demi-0.14.5.tgz"
-  integrity sha512-o9NUVpl/YlsGJ7t+xuqJKx8EBGf1quRhCiT6D/J0pfwmk9zUwYkC7yrF4SZCe6fETvSM3UNL2edcbYrSyc4QHA==
 
 vue-demi@>=0.14.5:
   version "0.14.5"

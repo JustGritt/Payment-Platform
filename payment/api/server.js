@@ -38,9 +38,11 @@ const contactService = require("./services/contact");
 app.use(require("./routes/security")(merchantService, contactService));
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
+const OperationRouter = require("./routes/operation");
+const OperationController = require("./controllers/operation");
 app.use("/merchants", authentificationGuard({JWTAuth: true}), new GenericRouter(new GenericController(merchantService)));
-app.use("/operations", new GenericRouter(new GenericController(operationService)));
-app.use("/transactions", authentificationGuard({ BasicAuth: true }), new TransactionRouter(new TransactionController(transactionService)));
+app.use("/operations", authentificationGuard({ JWTAuth: true, BasicAuth: true}), new OperationRouter(new OperationController(operationService)));
+app.use("/transactions",authentificationGuard({ JWTAuth: true, BasicAuth: true}), new TransactionRouter(new TransactionController(transactionService)));
 
 app.get("/", (req, res) => {
   res.send("Hello World");
@@ -73,14 +75,13 @@ app.get('/pendingMerchant', authentificationGuard({ JWTAuth: true}), async (req,
   if(!user) {
     res.sendStatus(401);
   }
-  const merchant = await merchantService.findAll({isvalid: false});
+  const merchant = await merchantService.findAll({is_active: false});
   console.log(merchant)
 
   res.json(merchant);
 
 
 })
-
 
 app.post('/validateMerchant', authentificationGuard({ JWTAuth: true}),async (req, res) => {
   const userService = require("./services/user");
@@ -90,8 +91,8 @@ app.post('/validateMerchant', authentificationGuard({ JWTAuth: true}),async (req
     const merchant = await merchantService.findById(req.body.merchant_id);
     console.log(merchant)
     if(merchant) {
-      const response = await merchantService.update({merchant_id: req.body.merchant_id}, {isvalid: true});
-      console.log("response", response);
+      const response = await merchantService.update({merchant_id: req.body.merchant_id}, {is_active: true});
+      console.log("response", response.bod);
       return res.sendStatus(200);
     }
     else {

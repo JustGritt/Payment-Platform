@@ -86,7 +86,11 @@ module.exports = function (connection) {
             defaultValue: false,
         },
         currency_id: DataTypes.INTEGER,
-        is_active: DataTypes.BOOLEAN,
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+        },
         client_token: {
             type: DataTypes.UUID,
             unique: true,

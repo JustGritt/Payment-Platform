@@ -3,6 +3,9 @@ import Home from "../views/TheHome.vue";
 import Dashboard from "../views/Dashboard.vue";
 import LoginView from "../views/LoginView.vue";
 
+import Cancel from "../views/CancelView.vue";
+import Confirm from "../views/ConfirmationView.vue";
+
 const routes = [
   {
     path: "/",
@@ -16,6 +19,16 @@ const routes = [
     path: "/login",
     name: "Login",
     component: LoginView,
+  },
+  {
+    path: "/cancel",
+    name: "Cancel",
+    component: Cancel,
+  },
+  {
+    path: "/confirm",
+    name: "Confirm",
+    component: Confirm,
   },
   {
     path: "/dashboard",

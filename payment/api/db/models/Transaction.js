@@ -1,4 +1,6 @@
 const { Model, DataTypes, UUID, UUIDV4 } = require("sequelize");
+const { getDb } = require('../mongoConnection');
+
 
 module.exports = function (connection) {
     class Transaction extends Model {
@@ -76,8 +78,14 @@ module.exports = function (connection) {
             transaction.transaction_state = transaction_state.dataValues.transaction_id;
         }
     })
+
     Transaction.addHook("afterCreate", async (transaction, options) => {
         const TransactionHistory = connection.models.TransactionHistory;
+        const operation = await Operation.findByPk(transaction.operation_id);
+        if (operation) {
+            operation.state = "completed"; // Update the state to 'completed'
+            await operation.save({ fields: ["state"] });
+        }
 
         await TransactionHistory.create({
             transaction_state: transaction.transaction_state,
@@ -87,7 +95,21 @@ module.exports = function (connection) {
         })
     });
 
-    // Add hook to update the operation_date
+    Transaction.addHook("afterCreate", async (transaction, options) => {
+        // ...
+
+        const db = getDb();
+        const collection = db.collection('transactions');
+
+        // Créez un nouveau document pour cette transaction avec un tableau vide pour les opérations
+        const document = {
+            merchant_id: transaction.merchant_id,
+            transaction_history: transaction.dataValues, // Informations sur cette transaction
+            operations: []  // Aucune opération au moment de la création
+        };
+        await collection.insertOne(document);
+    });
+
     Transaction.addHook("afterUpdate", async (transaction, options) => {
         const TransactionHistory = connection.models.TransactionHistory;
         await TransactionHistory.create({
@@ -96,6 +118,14 @@ module.exports = function (connection) {
             transaction_date: transaction.transaction_date,
             transaction_amount: transaction.transaction_amount
         })
+        const db = getDb();
+        const collection = db.collection('transactions');
+
+        // Mettez à jour le document avec les nouvelles informations de la transaction
+        await collection.updateOne(
+            { transaction_uid: transaction.transaction_uid },
+            { $set: { transaction_history: transaction.dataValues } }
+        );
     })
 
     return Transaction;

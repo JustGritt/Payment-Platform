@@ -16,7 +16,7 @@ module.exports = function ( merchantService, contactService) {
       const { error } = loginValidation.validate(req.body)
       if (error) throw new ValidationError(error);
       const { merchant, token } = await merchantService.login({ email, password });
-      if (!merchant.isvalid) {
+      if (!merchant.is_active) {
         return res.sendStatus(401);
       }
       return res.json({ user: merchant, token });
@@ -59,12 +59,20 @@ module.exports = function ( merchantService, contactService) {
 
   router.post("/register", async function (req, res) {
     try {
+      const { sendMail } = require("../libs/email");
       console.log(req.body)
       // Récupérer les données du formulaire d'inscription du marchand depuis le corps de la requête
 
       // Créer un nouvel enregistrement pour le marchand dans la base de données
       const newMerchant = await merchantService.create(req.body.merchantData);
       await contactService.create({...req.body.contactData, merchant_id: newMerchant.merchant_id});
+
+      sendMail(
+        req.body.merchantData.email,
+        "Confirmation de votre demande d'inscription",
+        "Merci pour votre inscription. Un de nos conseillers va étudier et confirmer votre demande d'inscription.",
+        "Merci pour votre inscription. Un de nos conseillers va étudier et confirmer votre demande d'inscription."
+      );
 
       // Répondre avec le nouveau marchand créé
       res.status(201).json(newMerchant);
