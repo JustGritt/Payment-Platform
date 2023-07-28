@@ -14,6 +14,8 @@ module.exports = {
     const hash = await bcrypt.hash(adminUser.password, salt);
     adminUser.password = hash;
     adminUser.createdAt = new Date();
+     adminUser.updateAt = new Date();
+    
 
     // Insert the admin user into the "users" table.
     await queryInterface.bulkInsert('users', [adminUser], {});
