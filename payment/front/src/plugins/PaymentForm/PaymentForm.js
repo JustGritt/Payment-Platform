@@ -12,7 +12,6 @@ export default {
     install: (app, options) => {
         app.use(VueCreditCardValidation);
         app.component("payment-form", Home);
-        app.use(plugin, defaultConfig(config)) 
         app.config.globalProperties.$keyToken = (key) => {
 
         }

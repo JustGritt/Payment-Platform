@@ -24,6 +24,10 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      transaction_amount: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

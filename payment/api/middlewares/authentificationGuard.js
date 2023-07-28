@@ -51,7 +51,6 @@ exports.authentificationGuard = (options) => async function (req, res, next) {
   }
 };
 
-const { v4: uuidv4, validate: isUUID } = require('uuid');
 
 async function checkBasicAuthentication(req, res, next) {
   try {
@@ -74,7 +73,6 @@ async function checkBasicAuthentication(req, res, next) {
     if (!merchant) {
       return res.sendStatus(401); // Return early after sending the response
     }
-    console.log(merchant)
     req.user = merchant.dataValues;
     return next();
   } catch (err) {

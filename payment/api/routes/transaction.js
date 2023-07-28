@@ -9,6 +9,7 @@ module.exports = function (Controller, options) {
   router.get("/:id", Controller.get);
   router.post("/:id/operation/pay", Controller.postPSP);
   router.post("/:id/operation/cancel", Controller.cancel);
+  router.post("/:id/operation/refund", Controller.refund);
   router.get('/:merchantId/stats', Controller.getKPIsForMerchant);
 
   return router;

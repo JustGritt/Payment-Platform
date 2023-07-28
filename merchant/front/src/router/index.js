@@ -44,7 +44,7 @@ const routes = [
             component: () => import("../views/Settings.vue"),
         },
         {
-            path: "/dashboard/orders",
+            path: "/dashboard",
             name: "Orders",
             component: () => import("../views/OrderView.vue"),
         },

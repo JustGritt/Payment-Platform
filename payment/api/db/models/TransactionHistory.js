@@ -5,6 +5,7 @@ module.exports = function (connection) {
         transaction_id: DataTypes.INTEGER,
         transaction_state: DataTypes.STRING,
         transaction_date: DataTypes.DATE,
+        transaction_amount: DataTypes.FLOAT,
     }, {
         sequelize: connection,
         tableName: "transaction_history",

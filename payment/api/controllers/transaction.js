@@ -1,5 +1,5 @@
 const ValidationError = require("../errors/ValidationError");
-const { Operation, TransactionState } = require("../db");
+const { Operation, TransactionState, Currency, Client } = require("../db");
 const Joi = require('joi');
 const kpiService = require('../services/kpi');
 
@@ -57,7 +57,7 @@ module.exports = function (Service) {
         getAll: async (req, res, next) => {
             console.log(req.user)
             try {
-                if(req.user.role === "admin") {
+                if (req.user.role === "admin") {
                     const contactService = require("../services/contact");
 
                     const transactions = await Service.findAll();
@@ -78,7 +78,7 @@ module.exports = function (Service) {
                     transactions.forEach((transaction, index) => {
                         const foundContact = foundContacts[index];
                         if (foundContact && merchantIds[index] === foundContact.merchant_id) {
-                        transaction.merchant_id = foundContact.firstname; // Assuming "firstname" is the property you want to use
+                            transaction.merchant_id = foundContact.firstname; // Assuming "firstname" is the property you want to use
                         }
                     });
 
@@ -86,7 +86,17 @@ module.exports = function (Service) {
                 }
                 else {
                     const clientService = require("../services/client");
-                    const transactions = await Service.findAll({ merchant_id: req.user.id });
+                    const merchant_id = req.user.id || req.user.merchant_id;
+                    const transactions_merchant = await Service.findAll({ merchant_id });
+                    const transactions = await Promise.all(transactions_merchant.map(async (transaction) => (
+                        {
+                            ...transaction.dataValues,
+                            currency: await Currency.findOne({ where: { currency_id: transaction.currency_id } }),
+                            operation: await Operation.findOne({ where: transaction.operation_id }),
+                            transaction_state: await TransactionState.findOne({ where: transaction.transaction_state }),
+                            client: await Client.findOne({ where: { client_id: transaction.client_id } }),
+                        }
+                    )));
                     const clientIds = transactions.map((transaction) => transaction.client_id);
 
                     // Fetch all clients for the corresponding client_ids
@@ -105,11 +115,19 @@ module.exports = function (Service) {
                         const foundClient = foundClients[index];
                         console.log(foundClient);
                         if (foundClient && clientIds[index] === foundClient.client_id) {
+<<<<<<< HEAD
+                            transaction.client_id = foundClient; // Assuming "firstname" is the property you want to use
+                        }
+                    });
+
+                    res.json(transactions)
+=======
                             transaction.client_id = foundClient; // Assuming "email" is the property you want to use
                         }
                     });
                     res.json(transactions);
 
+>>>>>>> main
                 }
             } catch (err) {
                 next(err);
@@ -180,5 +198,20 @@ module.exports = function (Service) {
                 next(error);
             }
         },
+
+        refund: async (req, res, next) => {
+            try {
+                const type_refund = req.body.transaction_amount > 0 ? "partial-refund" : "full-refund";
+                const transaction_state = await TransactionState.findOne({
+                    where: {
+                        name: type_refund,
+                    }
+                });
+                const service = await Service.update({ transaction_id: parseInt(req.params.id) }, { transaction_state: transaction_state.dataValues.transaction_id });
+                res.status(200).json(service);
+            } catch (err) {
+                next(err);
+            }
+        }
     };
 };
