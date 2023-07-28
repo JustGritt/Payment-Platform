@@ -14,7 +14,7 @@ module.exports = {
     const hash = await bcrypt.hash(adminUser.password, salt);
     adminUser.password = hash;
     adminUser.createdAt = new Date();
-     adminUser.updateAt = new Date();
+     adminUser.updatedAt = new Date();
     
 
     // Insert the admin user into the "users" table.
