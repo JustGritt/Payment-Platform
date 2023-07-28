@@ -82,7 +82,7 @@ module.exports = function (connection) {
     Transaction.addHook("afterCreate", async (transaction, options) => {
         const TransactionHistory = connection.models.TransactionHistory;
         const Operation = connection.models.Operation;
-        const operation = await Operation.findByPk(transaction.operation_id);
+        const operation = await Operation.findOne({ where: { transaction_id: transaction.operation_id } });
         if (operation) {
             operation.state = "completed"; // Update the state to 'completed'
             await operation.save({ fields: ["state"] });

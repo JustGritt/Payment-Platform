@@ -35,6 +35,7 @@ module.exports = {
         name: "completed",
       }
     });
+    
     if (transaction_state) {
       transaction.transaction_state = transaction_state.dataValues.transaction_id;
     }
