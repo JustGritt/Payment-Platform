@@ -24,7 +24,7 @@ jobs:
         run: cd payment/api && npm install
 
       - name: Run tests
-        run: cd payment/api && npm test
+        run: cd payment/api && npm run test rateLimiter
 
   build_payment_api:
     runs-on: ubuntu-latest
