@@ -32,6 +32,8 @@ if (process.env.NODE_ENV === "test") {
     function getDb() {
         return mongoDb;
     }
+
+    module.exports = { connect, getDb };
 }
 
-module.exports = { connect, getDb };
+
