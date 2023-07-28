@@ -107,10 +107,7 @@ const onErrorForm = (errors) => {
             <div class="form-input-payment mt-10">
                 <label for="name" class="little-label">Country or region</label>
                 <FormKit type="select" outer-class="$reset little-label" name="region" :options="[
-                    'Monaco',
-                    'Vatican City',
-                    'Maldives',
-                    'Tuvalu',
+                    'France',
                 ]" />
             </div>
             <div class="form-input-payment mt-10">

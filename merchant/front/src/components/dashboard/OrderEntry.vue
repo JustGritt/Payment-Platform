@@ -1,5 +1,52 @@
-<script setup>
-import { defineProps } from "vue";
+<script setup lang="ts">
+import {
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuItems,
+} from "@headlessui/vue";
+import { ModalsContainer, useModal } from 'vue-final-modal'
+import ModalRefundForm from "./components/ModalRefundForm.vue";
+import { performHttpCall } from "./components/api";
+
+const userNavigation = [
+	{ name: "Refund",  },
+];
+const emit = defineEmits()
+
+// const onSubmit = async (data) => {
+// 	submitting.value = true
+// 	try {
+// 		const response = await performHttpCall(`/transactions/${transaction.value.transaction_id}/operation/pay`, 'POST', { ...data, amount: amount_value }, `Basic: ${credentialsB64}`)
+// 		submitting.value = false
+// 		if (response.confirmationUrl)
+// 			location.replace(response.confirmationUrl)
+// 	} catch (error) {
+// 		if (Object.keys(error).includes('urlFailed')) {
+// 			if (error.urlFailed) {
+// 				location.replace(error.urlFailed)
+// 			}
+// 		}
+// 		createToast(error.message, { type: 'danger', hideProgressBar: true })
+// 		submitting.value = false
+// 		throw new Error(error.message)
+// 	}
+// }
+const { open, close } = useModal({
+	component: ModalRefundForm,
+	attrs: {
+		amount: 100,
+		item: {},
+		onSubmit(formData) {
+			alert(JSON.stringify(formData, null, 2))
+			close()
+		},
+		close: () => {
+			close()
+		}
+	},
+})
+
 const { order } = defineProps(["order"]);
 </script>
 
@@ -37,11 +84,32 @@ const { order } = defineProps(["order"]);
 
 	<td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400 text-center">
 		{{ order.date }}
-    </td>
-
-	<td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400 text-center">
-		<a href="#" class="text-indigo-600 hover:text-indigo-900">
-			Edit
-		</a>
 	</td>
+
+	<td
+		class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400 text-center relative flex justify-center">
+		<Menu as="div" class="relative">
+			<MenuButton class="flex items-center p-1.5">
+				<a href="#" class="text-indigo-600 hover:text-indigo-900">
+					Edit
+				</a>
+			</MenuButton>
+			<transition enter-active-class="transition ease-out duration-100"
+				enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
+				leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100"
+				leave-to-class="transform opacity-0 scale-95">
+				<MenuItems
+					class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+					<MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
+					<VButton @click="open" :class="[
+						active ? 'bg-gray-50' : '',
+						'block w-full px-3 py-1 text-sm leading-6 text-gray-900',
+					]">{{ item.name }}</VButton>
+					</MenuItem>
+				</MenuItems>
+			</transition>
+		</Menu>
+
+	</td>
+	<ModalsContainer />
 </template>

@@ -77,13 +77,13 @@ module.exports = function (connection) {
         }
     })
     Transaction.addHook("afterCreate", async (transaction, options) => {
-        const Operation = connection.models.Operation;
         const TransactionHistory = connection.models.TransactionHistory;
 
         await TransactionHistory.create({
             transaction_state: transaction.transaction_state,
             transaction_id: transaction.transaction_id,
-            transaction_date: transaction.transaction_date
+            transaction_date: transaction.transaction_date,
+            transaction_amount: transaction.transaction_amount
         })
     });
 
@@ -93,7 +93,8 @@ module.exports = function (connection) {
         await TransactionHistory.create({
             transaction_state: transaction.transaction_state,
             transaction_id: transaction.transaction_id,
-            transaction_date: transaction.transaction_date
+            transaction_date: transaction.transaction_date,
+            transaction_amount: transaction.transaction_amount
         })
     })
 
