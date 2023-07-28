@@ -7,7 +7,7 @@ module.exports = function () {
         //TODO: update the transaction status in db
         //TODO: go find in db the transaction id and send it back to the client
         //TODO: go find in db the merchant webhook url and send it back to the client
-        const MERCHANT_URL = 'http://localhost:3000/psp/merchant/webhook';
+        const MERCHANT_URL = 'https://psp.strapouz.com/psp/merchant/webhook';
         fetch(MERCHANT_URL, {
             method: 'POST',
             headers: {
