@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import {
 	Menu,
 	MenuButton,
@@ -7,39 +7,48 @@ import {
 } from "@headlessui/vue";
 import { ModalsContainer, useModal } from 'vue-final-modal'
 import ModalRefundForm from "./components/ModalRefundForm.vue";
-import { performHttpCall } from "./components/api";
+import { performHttpCall, credentialsB64 } from "../../utils/api";
+import { ref } from "vue";
+import { createToast } from 'mosha-vue-toastify';
 
 const userNavigation = [
-	{ name: "Refund",  },
+	{ name: "Refund", },
 ];
-const emit = defineEmits()
 
-// const onSubmit = async (data) => {
-// 	submitting.value = true
-// 	try {
-// 		const response = await performHttpCall(`/transactions/${transaction.value.transaction_id}/operation/pay`, 'POST', { ...data, amount: amount_value }, `Basic: ${credentialsB64}`)
-// 		submitting.value = false
-// 		if (response.confirmationUrl)
-// 			location.replace(response.confirmationUrl)
-// 	} catch (error) {
-// 		if (Object.keys(error).includes('urlFailed')) {
-// 			if (error.urlFailed) {
-// 				location.replace(error.urlFailed)
-// 			}
-// 		}
-// 		createToast(error.message, { type: 'danger', hideProgressBar: true })
-// 		submitting.value = false
-// 		throw new Error(error.message)
-// 	}
-// }
+const submitting = ref(false)
+
+const requestRefund = async ({ order: transaction }) => {
+	submitting.value = true
+	await setTimeout(async () => {
+		try {
+			const response = await performHttpCall(`/transactions/${transaction.transaction_id}/operation/refund`, 'POST', { ...transaction }, `Basic: ${credentialsB64}`)
+			createToast('Refund successfully', { type: 'success', hideProgressBar: true })
+			submitting.value = false
+			close()
+		} catch (error) {
+			createToast(error.message, { type: 'danger', hideProgressBar: true })
+			submitting.value = false
+			throw new Error(error.message)
+		}
+	}, 8000)
+}
+
+const formatDate = (dateString) => {
+	const date = new Date(dateString);
+	// Then specify how you want your dates to be formatted
+	return new Intl.DateTimeFormat('default', { dateStyle: 'long' }).format(date);
+}
+
+const { order } = defineProps(["order"]);
+
 const { open, close } = useModal({
 	component: ModalRefundForm,
 	attrs: {
-		amount: 100,
+		order: order,
+		submitting: submitting,
 		item: {},
-		onSubmit(formData) {
-			alert(JSON.stringify(formData, null, 2))
-			close()
+		async onSubmit(order) {
+			await requestRefund(order)
 		},
 		close: () => {
 			close()
@@ -47,46 +56,54 @@ const { open, close } = useModal({
 	},
 })
 
-const { order } = defineProps(["order"]);
 </script>
 
 <template>
 	<td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400 text-center">
-		<div class="flex items-center">
-			<img class="h-11 w-11 rounded-full mr-2" :src="order.product_image" alt="Image du produit" />
-			{{ order.product_name }}
+		<div class="flex items-center justify-center">
+			{{ order.client ? order.client.email : 'Anonymous' }}
 		</div>
 	</td>
 
 	<td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400 text-center">
-		{{ order.product_price }} {{ order.currency }}
+		{{ order.transaction_amount }} {{ order.currency.name === "EUR" ? "€" : "" }}
 	</td>
 
 	<td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400 text-center">
-		<span v-if="order.status === 'Completed'"
+		<span v-if="order.transaction_state.name === 'completed'"
 			class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500">
-			{{ order.status }}
+			Completed
 		</span>
-		<span v-if="order.status === 'Pending'"
+		<span v-if="order.transaction_state.name === 'pending'"
 			class="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-yellow-400 border border-yellow-100 dark:border-yellow-500">
-			{{ order.status }}
+			En attente
 		</span>
-		<span v-if="order.status === 'Failed'"
-			class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-red-400 border border-red-100 dark:border-red-500">
-			{{ order.status }}
+		<span v-if="order.transaction_state.name === 'partial-refund'"
+			class="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-yellow-400 border border-yellow-100 dark:border-yellow-500">
+			Partial refunded
 		</span>
 
-		<span v-if="order.status === 'Progress'"
+		<span v-if="order.transaction_state.name === 'full-refund'"
+			class="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-yellow-400 border border-yellow-100 dark:border-yellow-500">
+			Full refunded
+		</span>
+
+		<span v-if="order.transaction_state.name === 'cancelled'"
+			class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-red-400 border border-red-100 dark:border-red-500">
+			Cancelled
+		</span>
+
+		<span v-if="order.transaction_state.name === 'capture'"
 			class="bg-purple-100 text-purple-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md border border-purple-100 dark:bg-gray-700 dark:border-purple-500 dark:text-purple-400">
-			In Progress
+			Intent
 		</span>
 	</td>
 
 	<td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400 text-center">
-		{{ order.date }}
+		{{ formatDate(order.createdAt) }}
 	</td>
 
-	<td
+	<td v-if="order.transaction_state.name === 'completed'"
 		class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400 text-center relative flex justify-center">
 		<Menu as="div" class="relative">
 			<MenuButton class="flex items-center p-1.5">

@@ -3,9 +3,12 @@ import { reactive } from 'vue';
 import { VueFinalModal } from 'vue-final-modal'
 
 const props = defineProps({
-    amount: {
-        type: Number,
+    order: {
+        type: Object,
         default: 0
+    },
+    submitting: {
+        type: Boolean
     },
     close: {
         type: Function
@@ -15,7 +18,7 @@ const props = defineProps({
 const emit = defineEmits()
 
 const amount = reactive({
-    count: props.amount,
+    count: props.order.transaction_amount,
 })
 
 const onUpdate = (newValue, oldValue) => {
@@ -43,19 +46,21 @@ const onUpdate = (newValue, oldValue) => {
                         </div>
                         <div class="flex justify-center flex-col ml-3">
                             <h3 class="font-semibold text-gray-900 sm:pl-0 leading-[1rem]">Account</h3>
-                            <p class="leading-[1rem] text-gray-500 text-sm">alan@mail.com</p>
+                            <p class="leading-[1rem] text-gray-500 text-sm truncate w-[10rem]">{{ props.order.client.email
+                            }}</p>
                         </div>
                     </div>
                     <div class="mt-1">
                         <p class="leading-[1rem] text-sm">12 jan 2023</p>
                     </div>
                 </div>
-                <h3 class="my-3 font-semibold text-gray-900 sm:pl-0 text-xl text-center">{{ props.amount }} €</h3>
+                <h3 class="my-3 font-semibold text-gray-900 sm:pl-0 text-xl text-center">{{ props.order.transaction_amount
+                }} €</h3>
                 <div class="flex justify-between items-center">
                     <span
                         class="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-yellow-400 border border-yellow-100 dark:border-yellow-500">Montant
                         restant
-                        - {{ (props.amount - amount.count) }} €</span>
+                        - {{ (props.order.transaction_amount - amount.count) }} €</span>
                     <p class="leading-[1rem] text-gray-500 text-[0.75rem] text-end italic">Éffectuer avec la carte 4453</p>
                 </div>
             </div>
@@ -65,17 +70,18 @@ const onUpdate = (newValue, oldValue) => {
             </p>
 
             <div class="flex justify-center my-2">
-                <vue-number-input :min=0 :max="props.amount" @update:model-value="onUpdate" :model-value="amount.count"
-                    :change="onChange" inline center controls></vue-number-input>
+                <vue-number-input :min=0 :max="props.order.transaction_amount" @update:model-value="onUpdate"
+                    :model-value="amount.count" :change="onChange" inline center controls></vue-number-input>
             </div>
 
             <div class="flex justify-end gap-x-2">
-                <button
+                <button :disabled="submitting"
                     class="bg-[#CCE4FE] text-[#1A4C9F] hover:bg-[#deebff] group flex gap-x-3 rounded-md px-4 py-2 text-sm leading-6 font-semibold"
-                :onclick="() => emit('submit', {amount,  })">
-                    Refund
+                    :onclick="() => emit('submit', { order })">
+                    {{ submitting ? 'Processing...' : 'Refund' }}
                 </button>
                 <button
+                    v-if="!submitting"
                     class="bg-[#FFFFFF] border border-[#d9d9d9] text-black hover:border-black group flex gap-x-3 rounded-md px-4 py-2 text-sm leading-6 font-semibold"
                     :onClick="close">
                     Cancel

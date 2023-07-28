@@ -1,31 +1,21 @@
 <script setup>
 import OrderEntry from "@/components/dashboard/OrderEntry.vue";
+import { performHttpCall, credentialsB64 } from "../utils/api";
+import { ref, onMounted } from "vue";
+import { useCartStore } from "@/store/cart";
+import { useTransactionsStore } from "@/store/transactions";
+
+const transactionStore = useTransactionsStore();
+
+
+onMounted(() => {
+    //transactionStore.getTransactions
+})
 
 // Simulate a database query
-const orders = [
-    {
-        client_id: {
-            client_id: 1,
-            email: "admin@example.com",
-            firstname: "admin",
-            lastname: "admin",
-        },
-        createdAt: "2023-07-28T10:36:01.907Z",
-        currency_id: "EUR",
-        merchant_id: 1,
-        operation_id: {
-            operation_id: 1,
-            amount: 18,
-            card_number: "4242********4242",
-            status: "completed"
-        },
-        transaction_amount: 18,
-        transaction_date: "2023-07-28T10:36:01.907Z",
-        transaction_id: 1,
-        transaction_state: 2,
-        updatedAt: "2023-07-28T10:36:23.571Z"
-    },
-];
+const orders = ref([])
+
+
 </script>
 
 <template>
@@ -45,10 +35,10 @@ const orders = [
                         <thead>
                             <tr>
                                 <th scope="col" class="py-3 text-sm font-semibold text-gray-900 sm:pl-0 text-center">
-                                    Nom du produit
+                                    Client
                                 </th>
                                 <th scope="col" class="py-3 text-sm font-semibold text-gray-900 sm:pl-0">
-                                    Prix
+                                    Montant
                                 </th>
                                 <th scope="col" class="py-3 text-sm font-semibold text-gray-900 sm:pl-0">
                                     Statut
