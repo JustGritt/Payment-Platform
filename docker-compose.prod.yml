@@ -12,16 +12,16 @@ services:
     volumes:
       - ./payment/pgdata:/var/lib/postgresql/data
 
-    mongodb:
-      image: mongo:latest
-      container_name: mongodb-container
-      # ports:
-        # - "27017:27017"
-      environment:
-        - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}  # You can change this username
-        - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}  # You can change this password
-      volumes:
-        - ./payment/mongodata:/data/db
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-container
+    # ports:
+      # - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}  # You can change this username
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}  # You can change this password
+    volumes:
+      - ./payment/mongodata:/data/db
 
   payment-server:
     image: popokola/payment-api:latest
