@@ -1,7 +1,7 @@
 const ValidationError = require("../errors/ValidationError");
 const { Operation, TransactionState } = require("../db");
 const Joi = require('joi');
-
+const kpiService = require('../services/kpi');
 
 module.exports = function (Service) {
     return {
@@ -18,6 +18,34 @@ module.exports = function (Service) {
                 const user = await Service.findById(parseInt(req.params.id));
                 if (!user) return res.sendStatus(404);
                 res.json(user);
+            } catch (err) {
+                next(err);
+            }
+        },
+        getKPIsForMerchant: async (req, res, next) => {
+            try {
+                const merchantId = req.params.merchantId;
+                const totalOrders = await kpiService.getMerchantTotalOrders(merchantId);
+                const averageOrderValue = await kpiService.getMerchantAverageOrderValue(merchantId);
+    
+                res.json({
+                    totalOrders,
+                    averageOrderValue
+                });
+            } catch (err) {
+                next(err);
+            }
+        },      
+        getTransactionByTransactionId: async (req, res, next) => {
+            try {
+                const transactionId = req.params.transactionId; // Supposons que l'ID de transaction est passé comme un paramètre dans l'URL
+                const transaction = await Service.searchByTransactionId(transactionId);
+        
+                if (!transaction) {
+                    return res.status(404).json({ message: 'Transaction not found' });
+                }
+        
+                res.json(transaction);
             } catch (err) {
                 next(err);
             }
@@ -94,6 +122,7 @@ module.exports = function (Service) {
                 next(err);
             }
         },
+        
         postPSP: async (req, res, next) => {
             function maskCard(num) {
                 return `${num.substr(0, 4)}${'*'.repeat(num.length - 8)}${num.substr(num.length - 4)}`;

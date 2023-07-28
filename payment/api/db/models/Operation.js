@@ -1,4 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
+const { getDb } = require('../mongoConnection'); // adjust the path accordingly
+
 
 module.exports = function (connection) {
     class Operation extends Model {
@@ -52,6 +54,23 @@ module.exports = function (connection) {
             tableName: "operations",
         }
     );
+
+    Operation.addHook("afterCreate", async (operation, options) => {
+        const db = getDb();
+        const collection = db.collection('transactions');
+    
+        // Récupérez la transaction associée à cette opération pour obtenir le transaction_uid
+        const Transaction = connection.models.Transaction;
+        const relatedTransaction = await Transaction.findByPk(operation.transaction_id);
+    
+        // Ajoutez la nouvelle opération au tableau operations du document de la transaction
+        await collection.updateOne(
+            { transaction_uid: relatedTransaction.transaction_uid },
+            { $push: { operations: operation.dataValues } }
+        );
+    });
+    
+    
 
     return Operation;
 };

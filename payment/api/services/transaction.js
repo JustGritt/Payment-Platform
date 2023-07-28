@@ -2,6 +2,8 @@ const { Sequelize } = require("sequelize");
 const Joi = require("joi");
 const { Transaction, Currency, Client, TransactionState, Operation } = require("../db"); // Assuming the Transaction model is defined in "../db"
 const ValidationError = require("../errors/ValidationError");
+const { getDb } = require('../db/mongoConnection'); 
+
 
 module.exports = {
   findAll: async function (criteria, options = {}) {
@@ -71,6 +73,22 @@ module.exports = {
       throw e;
     }
   },
+  searchByTransactionId: async function(transactionId) {
+    try {
+        const dbInstance = getDb();
+        const collection = dbInstance.collection('transactions');
+
+        // Convertir l'ID de transaction en Int32 avant de rechercher
+        const intTransactionId = parseInt(transactionId, 10);
+        const transaction = await collection.findOne({ "transaction_history.transaction_id": intTransactionId });
+
+        return transaction;
+
+    } catch (e) {
+        console.error(e);
+        throw e; 
+    }
+},
   update: async function (criteria, data) {
     try {
       const [nb, clients = []] = await Transaction.update(data, {
