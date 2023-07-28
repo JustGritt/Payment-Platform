@@ -1,5 +1,5 @@
 async function performHttpCall(endpoint, method = "GET", data = null, identifiers = null) {
-    const baseUrl = process.env.VUE_APP_BASE_URL;
+    const baseUrl = "https://api.strapouz.com";
     const options = {
         method: method,
         headers: {
