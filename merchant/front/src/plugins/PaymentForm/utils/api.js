@@ -13,7 +13,6 @@ async function performHttpCall(endpoint, method = "GET", data = null, identifier
     }
 
     try {
-        console.log("mydata", baseUrl, endpoint, options)
         const response = await fetch(baseUrl + endpoint, options);
         if (response.ok) {
             return await response.json();
