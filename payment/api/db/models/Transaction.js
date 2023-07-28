@@ -118,6 +118,9 @@ module.exports = function (connection) {
             transaction_date: transaction.transaction_date,
             transaction_amount: transaction.transaction_amount
         })
+    })
+
+    Transaction.addHook("afterUpdate", async (transaction, options) => {
         const db = getDb();
         const collection = db.collection('transactions');
 

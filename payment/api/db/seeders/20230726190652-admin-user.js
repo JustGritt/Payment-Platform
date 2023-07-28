@@ -2,7 +2,6 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    /*
     const adminUser = {
       lastname: 'Admin',
       firstname: 'User',
@@ -15,12 +14,14 @@ module.exports = {
     const hash = await bcrypt.hash(adminUser.password, salt);
     adminUser.password = hash;
     adminUser.createdAt = new Date();
+     adminUser.updateAt = new Date();
+    
 
     // Insert the admin user into the "users" table.
     await queryInterface.bulkInsert('users', [adminUser], {});
 
     console.log('Admin user created successfully');
-    */
+
   },
 
   async down(queryInterface, Sequelize) {

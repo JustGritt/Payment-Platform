@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const TransactionStateModel = require("../models/transactionState");
+const TransactionStateModel = require("../models/TransactionState");
 
 module.exports = {
   up: async (queryInterface) => {

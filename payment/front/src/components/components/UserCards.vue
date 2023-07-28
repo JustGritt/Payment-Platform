@@ -4,7 +4,7 @@
 </script>
 <template>
     <div
-    v-if="merchant.isvalid"
+    v-if="merchant.is_active"
     class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <div class="flex flex-col items-center pt-6 pb-10">
         <img class="w-24 h-24 mb-3 rounded-full shadow-lg" src="" alt="Merchant image" />

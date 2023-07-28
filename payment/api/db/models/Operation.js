@@ -61,11 +61,12 @@ module.exports = function (connection) {
     
         // Récupérez la transaction associée à cette opération pour obtenir le transaction_uid
         const Transaction = connection.models.Transaction;
-        const relatedTransaction = await Transaction.findByPk(operation.transaction_id);
+        console.log("operation", operation);
+        const relatedTransaction = await Transaction.findByPk(operation.dataValues.transaction_id);
     
         // Ajoutez la nouvelle opération au tableau operations du document de la transaction
         await collection.updateOne(
-            { transaction_uid: relatedTransaction.transaction_uid },
+            { transaction_uid: relatedTransaction.dataValues.transaction_uid },
             { $push: { operations: operation.dataValues } }
         );
     });

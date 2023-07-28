@@ -36,8 +36,12 @@ module.exports = function (Service) {
                 next(err);
             }
         },
+
         getTransactionByTransactionId: async (req, res, next) => {
+            console.log("req.params", req.params)
             try {
+                console.log("req.params", req.params.transactionId)
+
                 const transactionId = req.params.transactionId; // Supposons que l'ID de transaction est passé comme un paramètre dans l'URL
                 const transaction = await Service.searchByTransactionId(transactionId);
 
@@ -101,7 +105,7 @@ module.exports = function (Service) {
 
                     const foundClients = [];
                     clientsArrays.forEach((clientArray, index) => {
-                        const client = clientArray[0]; // Assuming you want to consider only the first client
+                        const client = clientArray[0]; // Assuming you want to consider only one client
                         if (client && clientIds[index] === client.client_id) {
                             foundClients.push(client);
                         }
@@ -109,12 +113,21 @@ module.exports = function (Service) {
 
                     transactions.forEach((transaction, index) => {
                         const foundClient = foundClients[index];
+                        console.log(foundClient);
                         if (foundClient && clientIds[index] === foundClient.client_id) {
+<<<<<<< HEAD
                             transaction.client_id = foundClient; // Assuming "firstname" is the property you want to use
                         }
                     });
 
                     res.json(transactions)
+=======
+                            transaction.client_id = foundClient; // Assuming "email" is the property you want to use
+                        }
+                    });
+                    res.json(transactions);
+
+>>>>>>> main
                 }
             } catch (err) {
                 next(err);

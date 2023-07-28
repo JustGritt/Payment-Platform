@@ -1,5 +1,46 @@
 <script setup>
 import TransactionEntry from "@/components/components/TransactionEntry.vue";
+import { ref } from 'vue'
+import apiService from '../services/apiService'
+
+const kpis = ref([])
+
+apiService.getAllKPIs()
+    .then((response) => {
+		console.log(response)
+		kpis.value = response
+    })
+    .catch((error) => {
+    if (error.response && error.response.status == 401) {
+        error.value = true;
+    } else {
+        console.log(error);
+    }});
+
+
+// const searchData = ref('');
+
+// // Define the searchHandler function to handle the search
+// const searchHandler = (searchData) => {
+// 	// Call the searchTransaction function
+// 	searchTransaction(searchData);
+
+// };
+
+// // Create the registerMerchant function
+// async function searchTransaction(searchData) {
+//     try {
+
+//         // Appelez la fonction d'enregistrement du marchand du service API en passant les données complètes
+//         const response = await apiService.getSearchTransaction(searchData.value);
+// 		console.log(response)
+
+//         // Traitement des étapes suivantes après l'enregistrement réussi (par exemple, afficher un message de succès)
+//     } catch (error) {
+//         console.error(error);
+//     }
+// }
+
 </script>
 
 <template>
@@ -8,26 +49,60 @@ import TransactionEntry from "@/components/components/TransactionEntry.vue";
 			<h3 class="font-blooming text-4xl leading-none px-9">Dashboard</h3>
 			<div class="h-4"></div>
 
+			<div v-if="transactionSearch">
+				<h3>Transaction Details:</h3>
+				<p>Transaction ID: {{ transactionSearch.transaction_history.transaction_id }}</p>
+				<!-- Add more details as per your needs -->
+			</div>
+
+			<FormKit
+				type="form"
+				id="searchForm"
+				:form-class="submitted ? 'hide' : 'show'"
+				submit-label="search"
+				@submit="searchHandler"
+				:actions="false"
+			>
+				<FormKit
+					type="search"
+					placeholder="Search..."
+					v-model="searchData"
+					:input-class="{
+						'shadow-sm': true,
+						'bg-gray-50': true,
+						'border': true,
+						'border-gray-300': true,
+						'text-gray-900': true,
+						'sm:text-sm': true,
+						'rounded-lg': true,
+						'focus:ring-primary-500': true,
+						'focus:border-primary-500': true,
+						'block': true,
+						'w-full': true,
+						'p-2.5': true,
+						'mt-2': true,
+						'dark:bg-gray-700': true,
+						'dark:border-gray-600': true,
+						'dark:placeholder-gray-400': true,
+						'dark:text-white': true,
+						'dark:focus:ring-primary-500': true,
+						'dark:focus:border-primary-500': true
+					}"
+				/>
+			</FormKit>
+
 			<section class="px-9 grid grid-cols-1 gap-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 max-w-[1200px]">
 				<div class="p-5 w-fit bg-indigo-50 rounded-xl flex flex-col justify-between">
-					<h3 class="font-blooming text-2xl leading-[.5]">Revenues</h3>
-					<h4 class="font-blooming text-4xl font-bold leading-none">32400 €</h4>
+					<h3 class="font-blooming text-2xl leading-[.5]">Nombres commandes</h3>
+					<h4 class="font-blooming text-4xl font-bold leading-none">{{ kpis.totalOrders }}</h4>
 					<p class="text-md lowercase text-gray-400 leading-[.9]">
-						3.5% better than the past month
 					</p>
 				</div>
 				<div class="p-5 w-fit bg-fuchsia-50 rounded-xl flex flex-col justify-between">
-					<h3 class="font-blooming text-2xl leading-[.7]">Nombres de commandes</h3>
-					<h4 class="font-blooming text-4xl font-bold leading-none">12</h4>
+					<h3 class="font-blooming text-2xl leading-[.7]">Panier moyen</h3>
+					<h4 class="font-blooming text-4xl font-bold leading-none">{{ kpis.averageOrderValue }} EUR</h4>
 					<p class="text-md lowercase text-gray-400 leading-[.9]">
-						1.5% better than the past month
-					</p>
-				</div>
-				<div class="p-5 w-fit bg-rose-50 rounded-xl flex flex-col justify-between">
-					<h3 class="font-blooming text-2xl leading-[.7]">Nombres de visites</h3>
-					<h4 class="font-blooming text-4xl font-bold leading-none">2003</h4>
-					<p class="text-md lowercase text-gray-400 leading-[.9]">
-						5.5% better than the past month
+
 					</p>
 				</div>
 			</section>
@@ -241,4 +316,6 @@ export default {
 		getTagClass,
 	},
 };
+
+
 </script>

@@ -15,7 +15,7 @@ module.exports = {
       currency_id: Sequelize.INTEGER,
       client_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       merchant_id: {
         type: Sequelize.INTEGER,

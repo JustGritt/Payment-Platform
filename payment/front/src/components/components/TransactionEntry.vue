@@ -8,6 +8,14 @@ import Mastercard from '@/assets/icons/Mastercard.vue';
 import Visa from '@/assets/icons/Visa.vue';
 
 const { transaction } = defineProps(['transaction']);
+const date = new Date(transaction.transaction_date);
+// Convert to a friendly format (e.g. 2021-10-01)
+const friendlyDate = computed(() => {
+  const day = date.getDate() > 9 ? date.getDate() : `0${date.getDate()}`;
+  const month = date.getMonth() > 9 ? date.getMonth() : `0${date.getMonth()}`;
+  return `${day}/${month}/${date.getFullYear()}`;
+});
+console.log(friendlyDate);
 </script>
 
 <template>
@@ -15,12 +23,12 @@ const { transaction } = defineProps(['transaction']);
     <td class="p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white">
 
       <span class="font-semibold" v-if="user.role === 'admin'">{{ transaction.merchant_id }}</span>
-      <span class="font-semibold" v-else>{{ transaction.client_id }}</span>
+      <span class="font-semibold" v-else>{{ transaction.client_id.email }}</span>
     </td>
     <td
       class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400"
     >
-      {{ transaction.transaction_date }}
+      {{ friendlyDate }}
     </td>
     <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">
       {{ transaction.transaction_amount }}

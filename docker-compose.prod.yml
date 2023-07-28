@@ -3,14 +3,25 @@ services:
   postgres:
     image: postgres:11.1-alpine
     container_name: postgres-db
-    #ports:
-    #  - "5432:5432"
+    ports:
+      - "5432:5432"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
       - ./payment/pgdata:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-container
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}  # You can change this username
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}  # You can change this password
+    volumes:
+      - ./payment/mongodata:/data/db
 
   payment-server:
     image: popokola/payment-api:latest
@@ -22,6 +33,10 @@ services:
       - POSTMARK_API_TOKEN=${POSTMARK_API_TOKEN}
       - POSTMARK_FROM=${POSTMARK_FROM}
       - PSP_URL=${PSP_URL}
+      - MONGO_URL=${MONGO_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_HOSTNAME=${DB_HOSTNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
     ports:
       - "${BACK_PORT:-3000}:${BACK_PORT:-3000}" 
     container_name: node-api
