@@ -115,19 +115,10 @@ module.exports = function (Service) {
                         const foundClient = foundClients[index];
                         console.log(foundClient);
                         if (foundClient && clientIds[index] === foundClient.client_id) {
-<<<<<<< HEAD
-                            transaction.client_id = foundClient; // Assuming "firstname" is the property you want to use
-                        }
-                    });
-
-                    res.json(transactions)
-=======
                             transaction.client_id = foundClient; // Assuming "email" is the property you want to use
                         }
                     });
                     res.json(transactions);
-
->>>>>>> main
                 }
             } catch (err) {
                 next(err);
