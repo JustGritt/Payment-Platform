@@ -1,10 +1,11 @@
 const { MongoClient } = require('mongodb');
 
-const url = process.env.MONGO_URL;
+
 let client;
 if (process.env.NODE_ENV === "test") {
     client  = null;
 }else {
+    const url = process.env.MONGO_URL;
     client = new MongoClient(url);
 }
 
