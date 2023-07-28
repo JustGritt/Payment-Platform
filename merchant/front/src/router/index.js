@@ -3,6 +3,9 @@ import Home from "../views/TheHome.vue";
 import Dashboard from "../views/Dashboard.vue";
 import LoginView from "../views/LoginView.vue";
 
+import Cancel from "../views/CancelView.vue";
+import Confirm from "../views/ConfirmationView.vue";
+
 const routes = [
   {
     path: "/",
@@ -18,6 +21,16 @@ const routes = [
     component: LoginView,
   },
   {
+    path: "/cancel",
+    name: "Cancel",
+    component: Cancel,
+  },
+  {
+    path: "/confirm",
+    name: "Confirm",
+    component: Confirm,
+  },
+  {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
@@ -25,16 +38,16 @@ const routes = [
       requiresAuth: true,
     },
     children: [
-      {
-        path: "/dashboard/settings",
-        name: "Settings",
-        component: () => import("../views/Settings.vue"),
-      },
-			{
-				path: "/dashboard/orders",
-				name: "Orders",
-				component: () => import("../views/OrderView.vue"),
-			},
+        {
+            path: "/dashboard/settings",
+            name: "Settings",
+            component: () => import("../views/Settings.vue"),
+        },
+        {
+            path: "/dashboard/orders",
+            name: "Orders",
+            component: () => import("../views/OrderView.vue"),
+        },
     ],
   },
 ];

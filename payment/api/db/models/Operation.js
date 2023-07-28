@@ -22,7 +22,10 @@ module.exports = function (connection) {
                 type: DataTypes.FLOAT,
                 allowNull: false,
             },
-            status: DataTypes.STRING, // Refund - Pending - Success - Failed
+            status: {
+                type: DataTypes.STRING,
+                defaultValue: "pending",
+            }, // Refund - Pending - Success - Failed
             transaction_id: DataTypes.INTEGER,
             card_number: {
                 type: DataTypes.STRING,
@@ -39,6 +42,11 @@ module.exports = function (connection) {
                 validate: {
                     is: /^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/
                 }
+            },
+            createdAt: {
+                allowNull: false,
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW,
             },
         },
         {

@@ -12,7 +12,7 @@ import CardInputCvC from './CardInputs/CardInputCVC.vue'
 import CardInputNumberVue from './CardInputs/CardInputNumber.vue'
 import CardInputExpiry from './CardInputs/CardInputExpiry.vue'
 
-const { amount, currency, submitForm, submitting } = defineProps(['amount', 'currency', 'submitting', 'submitForm'])
+const { amount, currency, submitForm, submitting, meta } = defineProps(['amount', 'currency', 'submitting', 'submitForm', 'meta'])
 
 
 const values = ref({
@@ -50,6 +50,9 @@ const [zodPlugin, submitHandler] = createZodPlugin(
         validateOnInput: true,
     })
 
+
+const products = meta.products ?? []
+
 </script>
 <style lang="scss">
 @import "./form.scss";
@@ -71,17 +74,17 @@ const [zodPlugin, submitHandler] = createZodPlugin(
             </div>
             <div v-if="is_details_opened" class="details-payment-info">
                 <ul>
-                    <li>
-                        <span class="little-label">Name</span>
-                        <h4>12.86 €</h4>
+                    <li v-for="product in products">
+                        <span class="little-label">{{ product.name }}</span>
+                        <h4>{{ `${product.quantity} x ${(product.price).replaceAll('$', '')}` }} € </h4>
                     </li>
                     <li class="tva">
-                        <span class="little-label">Tva</span>
+                        <span class="little-label">TVA</span>
                         <h4>+ 0.20%</h4>
                     </li>
                     <li>
                         <span ref="thisDiv" class="label-title">Total</span>
-                        <h4 class="label-title">13.06 €</h4>
+                        <h4 class="label-title">{{ amount }} €</h4>
                     </li>
                 </ul>
             </div>
@@ -153,9 +156,12 @@ const [zodPlugin, submitHandler] = createZodPlugin(
             </div>
         </section>
         <section class="form-payments-actions">
-            <FormKit :options="{ mask: '#### #### #### ####' }" type="submit"
-                :label="submitting ? 'Pay now' : 'Payment in progress...'" outer-class="$reset btn-save-payment" />
-            <button type="button" @click="() => { this.$emit('close') }" class="btn-cancel-payment">
+            <FormKit :options="{ mask: '#### #### #### ####' }" type="submit" :input-class="{
+                '!btn-disabled': submitting == true ? true : false
+            }" :disabled="submitting" :label="submitting ? 'Payment in progress...' : 'Pay now'"
+                outer-class="$reset btn-save-payment" />
+            <button :disabled="submitting" type="button" @click="() => { this.$emit('close') }"
+                :class="['btn-cancel-payment', submitting ? '!btn-disabled' : '']">
                 Cancel
             </button>
         </section>

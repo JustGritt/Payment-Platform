@@ -1,11 +1,10 @@
-import { reactive, provide, inject } from 'vue';
+import { reactive } from 'vue';
 
 const userState = reactive({
   user: localStorage.getItem('user'),
   token: localStorage.getItem('token'),
-  role: 'admin',
+  role: "",
 });
-
 
 function logout() {
   userState.user = null;

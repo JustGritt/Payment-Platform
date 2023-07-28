@@ -71,7 +71,7 @@
                       </li>
                     </ul>
                     <p class="mt-4 font-medium text-gray-700">Total: ${{ cartTotal }}</p>
-                    <payment-form :amount="cartTotal" currency="EUR">
+                    <payment-form :amount="cartTotal" currency="EUR" :meta="{ products: cartItems }">
                       <template v-slot="{ click }">
                         <button
                           class="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"

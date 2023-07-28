@@ -31,15 +31,18 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-
 // TODO: Add env variable to enable/disable rate limiter
 //app.use(rateLimiter.rateLimiter);
 
-const contactService = require("./services/contact")
+const contactService = require("./services/contact");
 app.use(require("./routes/security")(merchantService, contactService));
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
-app.use("/transactions", authentificationGuard({ BasicAuth: true }), new TransactionRouter(new TransactionController(transactionService)));
+const OperationRouter = require("./routes/operation");
+const OperationController = require("./controllers/operation");
+app.use("/merchants", authentificationGuard({JWTAuth: true}), new GenericRouter(new GenericController(merchantService)));
+app.use("/operations", authentificationGuard({ JWTAuth: true, BasicAuth: true}), new OperationRouter(new OperationController(operationService)));
+app.use("/transactions",authentificationGuard({ JWTAuth: true, BasicAuth: true}), new TransactionRouter(new TransactionController(transactionService)));
 
 app.get("/", (req, res) => {
   res.send("Hello World");
@@ -50,6 +53,56 @@ app.get("/health", authentificationGuard({ BasicAuth: true }), (req, res) => {
 });
 
 app.post('/convert', require('./controllers/currencyConverter').currencyConverterController);
+
+app.get('/regenerateToken', authentificationGuard({ JWTAuth: true}), (req, res) => {
+
+  const merchantService = require("./services/merchant");
+  const merchant = merchantService.findById(req.user.id);
+  const { v4: uuidv4 } = require('uuid');
+
+  merchant.client_secret = uuidv4();
+  merchant.client_token = uuidv4();
+
+  merchantService.update({merchant_id: req.user.id}, merchant);
+  console.log(merchant);
+
+  res.send(merchant);
+});
+
+app.get('/pendingMerchant', authentificationGuard({ JWTAuth: true}), async (req, res) => {
+  const userService = require("./services/user");
+  const user = await userService.findById( req.user.id);
+  if(!user) {
+    res.sendStatus(401);
+  }
+  const merchant = await merchantService.findAll({is_active: false});
+  console.log(merchant)
+
+  res.json(merchant);
+
+
+})
+
+app.post('/validateMerchant', authentificationGuard({ JWTAuth: true}),async (req, res) => {
+  const userService = require("./services/user");
+  const user = await userService.findById( req.user.id);
+
+  if(user) {
+    const merchant = await merchantService.findById(req.body.merchant_id);
+    console.log(merchant)
+    if(merchant) {
+      const response = await merchantService.update({merchant_id: req.body.merchant_id}, {is_active: true});
+      console.log("response", response.bod);
+      return res.sendStatus(200);
+    }
+    else {
+      return res.sendStatus(404);
+    }
+  }
+  else {
+    return res.sendStatus(404);
+  }
+});
 
 app.use('/webhook', new WebhookController());
 

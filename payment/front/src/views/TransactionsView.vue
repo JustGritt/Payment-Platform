@@ -1,17 +1,14 @@
-<script setup>
-import TransactionEntry from "@/components/components/TransactionEntry.vue";
-</script>
 
 <template>
   <aside class="w-full px-9 mt-8">
     <h3 class="font-blooming text-4xl leading-none">Transactions chart</h3>
     <section class="w-full">
-      <apexchart
+      <!-- <apexchart
         width="500"
         type="bar"
         :options="chartOptions"
         :series="series"
-      ></apexchart>
+      ></apexchart> -->
     </section>
 
     <section
@@ -30,7 +27,7 @@ import TransactionEntry from "@/components/components/TransactionEntry.vue";
                       scope="col"
                       class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
                     >
-                      Type de transaction
+                      Référence
                     </th>
                     <th
                       scope="col"
@@ -48,46 +45,14 @@ import TransactionEntry from "@/components/components/TransactionEntry.vue";
                       scope="col"
                       class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
                     >
-                      Réference
-                    </th>
-                    <th
-                      scope="col"
-                      class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
-                    >
                       Méthode de paiement
-                    </th>
-                    <th
-                      scope="col"
-                      class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
-                    >
-                      Statut
                     </th>
                   </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-gray-800">
-                  <TransactionEntry
-                    transactionType="Paiement"
-                    clientName="John Doe"
-                    transactionDate="20/04/2023"
-                    amount="1900€"
-                    referenceNumber="0047568936"
-                    paymentMethod="MasterCard"
-                    creditCardLastFourDigits="1234"
-                    status="Completed"
-                  />
+                  <TransactionEntry v-for="transaction in transactions" :key="transaction.transaction_id" :transaction="transaction" />
 
-                  <TransactionEntry
-                    transactionType="Paiement"
-                    clientName="Jane Doe"
-                    transactionDate="20/04/2023"
-                    amount="290€"
-                    referenceNumber="0045568939"
-                    paymentMethod="MasterCard"
-                    creditCardLastFourDigits="1234"
-                    status="Pending"
-                  />
-
-                  <TransactionEntry
+                  <!-- <TransactionEntry
                     transactionType="Remboursement"
                     clientName="John Doe"
                     transactionDate="20/04/2023"
@@ -107,7 +72,7 @@ import TransactionEntry from "@/components/components/TransactionEntry.vue";
                     paymentMethod="Visa"
                     creditCardLastFourDigits="1234"
                     status="Progress"
-                  />
+                  /> -->
                 </tbody>
               </table>
             </div>
@@ -207,51 +172,25 @@ import TransactionEntry from "@/components/components/TransactionEntry.vue";
 
 <style></style>
 
-<script>
-import { getTagClass } from "@/lib/utils.js";
-export default {
-  data: function () {
-    return {
-      chartOptions: {
-        xaxis: {
-          categories: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ],
-        },
-        stroke: {
-          curve: "smooth",
-        },
-        zoom: {
-          enabled: true,
-        },
-        chart: {
-          id: "vuechart-example",
-          type: "area",
-          height: 350,
-        },
-      },
+<script setup>
+import TransactionEntry from "@/components/components/TransactionEntry.vue";
+import { ref, computed, onMounted } from 'vue'
+import apiService from '../services/apiService'
 
-      series: [
-        {
-          name: "series-1",
-          data: [30, 40, 35, 50, 49, 60, 70, 91, 125, 150, 170, 190],
-        },
-      ],
-    };
-  },
-  methods: {
-    getTagClass,
-  },
-};
+const transactions = ref([])
+
+
+apiService.getAllTransaction()
+    .then((response) => {
+      console.log(response)
+      transactions.value = response
+    })
+    .catch((error) => {
+    if (error.response && error.response.status == 401) {
+        error.value = true;
+    } else {
+        console.log(error);
+    }})
+
+
 </script>

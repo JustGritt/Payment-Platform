@@ -82,7 +82,6 @@ module.exports = function (connection) {
     Transaction.addHook("afterCreate", async (transaction, options) => {
         const Operation = connection.models.Operation;
         const TransactionHistory = connection.models.TransactionHistory;
-    
         const operation = await Operation.findByPk(transaction.operation_id);
         if (operation) {
             operation.state = "completed"; // Update the state to 'completed'
@@ -112,6 +111,15 @@ module.exports = function (connection) {
     });
     
     Transaction.addHook("afterUpdate", async (transaction, options) => {
+        const TransactionHistory = connection.models.TransactionHistory;
+        await TransactionHistory.create({
+            transaction_state: transaction.transaction_state,
+            transaction_id: transaction.transaction_id,
+            transaction_date: transaction.transaction_date
+        })
+    })
+
+
         const db = getDb();
         const collection = db.collection('transactions');
     
