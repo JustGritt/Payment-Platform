@@ -71,7 +71,11 @@ module.exports = {
         defaultValue: false,
       },
       currency_id: Sequelize.INTEGER,
-      is_active: Sequelize.BOOLEAN,
+      is_active: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       client_token: {
         type: Sequelize.UUID,
         unique: true,

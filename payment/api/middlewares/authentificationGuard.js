@@ -64,16 +64,17 @@ async function checkBasicAuthentication(req, res, next) {
     const [clientId, clientToken] = decodedCredentials.split(":");
 
     // Ensure that clientId and clientToken are valid UUIDs
-    if (!isUUID(clientId) || !isUUID(clientToken)) {
-      return res.sendStatus(401); // Return early after sending the response
-    }
+    // if (!isUUID(clientId) || !isUUID(clientToken)) {
+    //   return res.sendStatus(401); // Return early after sending the response
+    // }
 
     const merchantService = require("../services/merchant");
-    const [merchant] = await merchantService.findAll({ client_token: uuidv4(clientId), client_secret: uuidv4(clientToken) });
+    const [merchant] = await merchantService.findAll({ client_token: clientId, client_secret: clientToken });
 
     if (!merchant) {
       return res.sendStatus(401); // Return early after sending the response
     }
+    console.log(merchant)
     req.user = merchant.dataValues;
     return next();
   } catch (err) {

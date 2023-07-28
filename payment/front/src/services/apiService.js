@@ -124,12 +124,28 @@ export default {
     try {
 
       apiClient.interceptors.request.use(config => {
-        console.log(userState.token)
         config.headers.Authorization = `Bearer ${userState.token}`;
         return config;
       });
 
       const response = await apiClient.get("/transactions");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+
+  },
+
+  getAllOperation: async() => {
+    try {
+
+      apiClient.interceptors.request.use(config => {
+        console.log(userState.token)
+        config.headers.Authorization = `Bearer ${userState.token}`;
+        return config;
+      });
+
+      const response = await apiClient.get("/operations");
       return response.data;
     } catch (error) {
       throw error;

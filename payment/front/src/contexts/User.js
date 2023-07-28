@@ -3,6 +3,7 @@ import { reactive } from 'vue';
 const userState = reactive({
   user: localStorage.getItem('user'),
   token: localStorage.getItem('token'),
+  role: "",
 });
 
 function logout() {

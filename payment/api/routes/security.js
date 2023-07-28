@@ -16,7 +16,7 @@ module.exports = function ( merchantService, contactService) {
       const { error } = loginValidation.validate(req.body)
       if (error) throw new ValidationError(error);
       const { merchant, token } = await merchantService.login({ email, password });
-      if (!merchant.isvalid) {
+      if (!merchant.is_active) {
         return res.sendStatus(401);
       }
       return res.json({ user: merchant, token });

@@ -48,6 +48,12 @@ const router = createRouter({
       component: () => import('../views/TransactionsView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/operations',
+      name: 'operations',
+      component: () => import('../views/OperationsView.vue'),
+      meta: { requiresAuth: true },
+    },
 
 
     {
@@ -72,11 +78,18 @@ router.beforeEach((to, from, next) => {
   // Check if the route requires authentication
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
-  console.log(requiresAuth, userState);
   // If the route requires authentication and the user is not logged in, redirect to the login page
   if (requiresAuth && !userState.user ) {
     next({ name: 'login' }); // Update 'Login' to the name of your login route
-  } else {
+  }
+  // Prevent the user to access login and register page when logged in
+  else if(to.name === 'login' && userState.user) {
+    next({ name: 'home' });
+  }
+  else if(to.name === 'Register' && userState.user) {
+    next({ name: 'home' });
+  }
+  else {
     // Otherwise, allow access to the route
     next();
   }
