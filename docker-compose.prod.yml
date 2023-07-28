@@ -3,8 +3,8 @@ services:
   postgres:
     image: postgres:11.1-alpine
     container_name: postgres-db
-    #ports:
-    #  - "5432:5432"
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -15,8 +15,8 @@ services:
   mongodb:
     image: mongo:latest
     container_name: mongodb-container
-    # ports:
-      # - "27017:27017"
+    ports:
+      - "27017:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}  # You can change this username
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}  # You can change this password
