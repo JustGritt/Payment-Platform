@@ -3,7 +3,7 @@ import axios from "axios";
 import { userState } from "../contexts/User";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:3000", // Remplacez cette URL par l'URL de votre serveur API
+  baseURL: "https://api.strapouz.com", // Remplacez cette URL par l'URL de votre serveur API
   headers: {
     "Content-Type": "application/json",
 
