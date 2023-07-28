@@ -1,19 +1,22 @@
 <script setup >
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 import { VueFinalModal } from 'vue-final-modal'
+import { useTransactionsStore } from "@/store/transactions";
 
 const props = defineProps({
     order: {
         type: Object,
         default: 0
     },
-    submitting: {
-        type: Boolean
-    },
     close: {
         type: Function
     }
 })
+
+
+const transactionStore = useTransactionsStore();
+const requestTransactionRefund = computed(() => transactionStore.requestTransactionRefund);
+const requestTransaction = computed(() => transactionStore.requestTransaction);
 
 const emit = defineEmits()
 
@@ -24,8 +27,6 @@ const amount = reactive({
 const onUpdate = (newValue, oldValue) => {
     amount.count = newValue
 }
-
-
 
 //emit('submit', formData)"
 </script>
@@ -46,7 +47,7 @@ const onUpdate = (newValue, oldValue) => {
                         </div>
                         <div class="flex justify-center flex-col ml-3">
                             <h3 class="font-semibold text-gray-900 sm:pl-0 leading-[1rem]">Account</h3>
-                            <p class="leading-[1rem] text-gray-500 text-sm truncate w-[10rem]">{{ props.order.client.email
+                            <p class="leading-[1rem] text-gray-500 text-sm truncate w-[10rem]">{{ props.order?.client?.email
                             }}</p>
                         </div>
                     </div>
@@ -75,13 +76,13 @@ const onUpdate = (newValue, oldValue) => {
             </div>
 
             <div class="flex justify-end gap-x-2">
-                <button :disabled="submitting"
+                <button
+                    :disabled="requestTransactionRefund.loading"
                     class="bg-[#CCE4FE] text-[#1A4C9F] hover:bg-[#deebff] group flex gap-x-3 rounded-md px-4 py-2 text-sm leading-6 font-semibold"
                     :onclick="() => emit('submit', { order })">
-                    {{ submitting ? 'Processing...' : 'Refund' }}
+                    {{ requestTransactionRefund.loading ? 'Processing...' : 'Refund' }}
                 </button>
-                <button
-                    v-if="!submitting"
+                <button v-if="!requestTransactionRefund.loading"
                     class="bg-[#FFFFFF] border border-[#d9d9d9] text-black hover:border-black group flex gap-x-3 rounded-md px-4 py-2 text-sm leading-6 font-semibold"
                     :onClick="close">
                     Cancel

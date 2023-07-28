@@ -1,19 +1,17 @@
 <script setup>
 import OrderEntry from "@/components/dashboard/OrderEntry.vue";
 import { performHttpCall, credentialsB64 } from "../utils/api";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useCartStore } from "@/store/cart";
 import { useTransactionsStore } from "@/store/transactions";
 
 const transactionStore = useTransactionsStore();
+const transactions = computed(() => transactionStore.requestTransaction);
 
 
 onMounted(() => {
-    //transactionStore.getTransactions
+    transactionStore.requestTransactions();
 })
-
-// Simulate a database query
-const orders = ref([])
 
 
 </script>
@@ -52,7 +50,7 @@ const orders = ref([])
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
-                            <tr v-for="order in orders" :key="order.product_name">
+                            <tr v-for="order in transactions.data" :key="order.product_name">
                                 <OrderEntry :order="order" />
                             </tr>
                         </tbody>

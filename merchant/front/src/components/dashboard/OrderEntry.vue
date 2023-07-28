@@ -8,30 +8,20 @@ import {
 import { ModalsContainer, useModal } from 'vue-final-modal'
 import ModalRefundForm from "./components/ModalRefundForm.vue";
 import { performHttpCall, credentialsB64 } from "../../utils/api";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { createToast } from 'mosha-vue-toastify';
+import { useTransactionsStore } from "@/store/transactions";
+
+const transactionStore = useTransactionsStore();
+const transactions = computed(() => transactionStore.requestTransaction);
+
+
+
 
 const userNavigation = [
 	{ name: "Refund", },
 ];
 
-const submitting = ref(false)
-
-const requestRefund = async ({ order: transaction }) => {
-	submitting.value = true
-	await setTimeout(async () => {
-		try {
-			const response = await performHttpCall(`/transactions/${transaction.transaction_id}/operation/refund`, 'POST', { ...transaction }, `Basic: ${credentialsB64}`)
-			createToast('Refund successfully', { type: 'success', hideProgressBar: true })
-			submitting.value = false
-			close()
-		} catch (error) {
-			createToast(error.message, { type: 'danger', hideProgressBar: true })
-			submitting.value = false
-			throw new Error(error.message)
-		}
-	}, 8000)
-}
 
 const formatDate = (dateString) => {
 	const date = new Date(dateString);
@@ -45,10 +35,9 @@ const { open, close } = useModal({
 	component: ModalRefundForm,
 	attrs: {
 		order: order,
-		submitting: submitting,
-		item: {},
 		async onSubmit(order) {
-			await requestRefund(order)
+			transactionStore.requestRefund(order);
+			close()
 		},
 		close: () => {
 			close()

@@ -8,6 +8,7 @@ payment/api/node_modules
 payment/api/dist
 payment/api/.env
 payment/pgdata
+payment/mongodata
 
 # payment Front directory
 payment/front/node_modules
