@@ -1,5 +1,5 @@
 const ValidationError = require("../errors/ValidationError");
-const { Operation, TransactionState } = require("../db");
+const { Operation } = require("../db");
 const Joi = require('joi');
 
 
@@ -23,59 +23,20 @@ module.exports = function (Service) {
             }
         },
         getAll: async (req, res, next) => {
-            console.log(req.user)
             try {
                 if(req.user.role === "admin") {
-                    const contactService = require("../services/contact");
-
-                    const transactions = await Service.findAll();
-                    const merchantIds = transactions.map((transaction) => transaction.merchant_id);
-
-                    // Fetch all contacts for the corresponding merchant_ids
-                    const contactsPromises = merchantIds.map((id) => contactService.findAll({ merchant_id: id }));
-                    const contactsArrays = await Promise.all(contactsPromises);
-
-                    const foundContacts = [];
-                    contactsArrays.forEach((contactArray, index) => {
-                        const contact = contactArray[0]; // Assuming you want to consider only the first contact
-                        if (contact && merchantIds[index] === contact.merchant_id) {
-                        foundContacts.push(contact);
-                        }
-                    });
-
-                    transactions.forEach((transaction, index) => {
-                        const foundContact = foundContacts[index];
-                        if (foundContact && merchantIds[index] === foundContact.merchant_id) {
-                        transaction.merchant_id = foundContact.firstname; // Assuming "firstname" is the property you want to use
-                        }
-                    });
-
-                    res.json(transactions);
+                   const operations = await Service.findAll();
+                   res.json(operations);
                 }
                 else {
-                    const clientService = require("../services/client");
-                    const transactions = await Service.findAll({ merchant_id: req.user.id });
-                    const clientIds = transactions.map((transaction) => transaction.client_id);
-
-                    // Fetch all clients for the corresponding client_ids
-                    const clientsPromises = clientIds.map((id) => clientService.findAll({ client_id: id }));
-                    const clientsArrays = await Promise.all(clientsPromises);
-
-                    const foundClients = [];
-                    clientsArrays.forEach((clientArray, index) => {
-                        const client = clientArray[0]; // Assuming you want to consider only the first client
-                        if (client && clientIds[index] === client.client_id) {
-                        foundClients.push(client);
-                        }
-                    });
-
-                    transactions.forEach((transaction, index) => {
-                        const foundClient = foundClients[index];
-                        if (foundClient && clientIds[index] === foundClient.client_id) {
-                        transaction.client_id = foundClient.email; // Assuming "firstname" is the property you want to use
-                        }
-                    });
-                    res.json(transactions)
+                   const transactionService = require('../services/transaction');
+                   const transactions = await transactionService.findAll({merchant_id: req.user.id});
+                   const transactionMerchantIds = transactions.map((transaction) => transaction.transaction_id);
+                   const operations = await Service.findAll();
+                   const operationTransactions = operations.map((operation) => operation.transaction_id);
+                   const operationsFiltered = operationTransactions.filter((operationTransaction) => transactionMerchantIds.includes(operationTransaction));
+                   const operationsFiltered2 = operations.filter((operation) => operationsFiltered.includes(operation.transaction_id));
+                   res.json(operationsFiltered2);
                 }
             } catch (err) {
                 next(err);

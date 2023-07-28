@@ -1,19 +1,10 @@
 
 <template>
   <aside class="w-full px-9 mt-8">
-    <h3 class="font-blooming text-4xl leading-none">Transactions chart</h3>
-    <section class="w-full">
-      <!-- <apexchart
-        width="500"
-        type="bar"
-        :options="chartOptions"
-        :series="series"
-      ></apexchart> -->
-    </section>
 
     <section
       class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-      <h3 class="font-blooming text-4xl leading-none">Dernières Transactions</h3>
+      <h3 class="font-blooming text-4xl leading-none">Dernières Opérations</h3>
 
       <!-- Table -->
       <div class="flex flex-col mt-6">
@@ -27,7 +18,7 @@
                       scope="col"
                       class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
                     >
-                      Référence
+                      Status
                     </th>
                     <th
                       scope="col"
@@ -45,34 +36,12 @@
                       scope="col"
                       class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
                     >
-                      Méthode de paiement
+                      Numéro de carte
                     </th>
                   </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-gray-800">
-                  <TransactionEntry v-for="transaction in transactions" :key="transaction.transaction_id" :transaction="transaction" />
-
-                  <!-- <TransactionEntry
-                    transactionType="Remboursement"
-                    clientName="John Doe"
-                    transactionDate="20/04/2023"
-                    amount="-1900€"
-                    referenceNumber="0047568936"
-                    paymentMethod="Visa"
-                    creditCardLastFourDigits="1234"
-                    status="Failed"
-                  />
-
-                  <TransactionEntry
-                    transactionType="Remboursement"
-                    clientName="John Doe"
-                    transactionDate="20/04/2023"
-                    amount="-1900€"
-                    referenceNumber="0047568936"
-                    paymentMethod="Visa"
-                    creditCardLastFourDigits="1234"
-                    status="Progress"
-                  /> -->
+                  <OperationEntry v-for="operation in operations" :key="operation.operation_id" :operation="operation" />
                 </tbody>
               </table>
             </div>
@@ -173,17 +142,17 @@
 <style></style>
 
 <script setup>
-import TransactionEntry from "@/components/components/TransactionEntry.vue";
+import OperationEntry from "@/components/components/OperationEntry.vue";
 import { ref, computed, onMounted } from 'vue'
 import apiService from '../services/apiService'
 
-const transactions = ref([])
+const operations = ref([])
 
 
-apiService.getAllTransaction()
+apiService.getAllOperation()
     .then((response) => {
       console.log(response)
-      transactions.value = response
+      operations.value = response
     })
     .catch((error) => {
     if (error.response && error.response.status == 401) {

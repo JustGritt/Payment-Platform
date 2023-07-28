@@ -4,12 +4,8 @@ import { inject, computed} from 'vue'
 import { logout } from "@/contexts/User";
 import router from "@/router";
 
-
 const user = localStorage.getItem('user');
 const role = JSON.parse(user)?.role;
-
-
-
 
 function handleLogout() {
     logout();
@@ -41,6 +37,13 @@ function handleLogout() {
                         to="/transactions">
                         <i class="fad fa-money-check mr-2"></i>
                         Toutes les transactions
+                    </router-link>
+
+                    <router-link active-class="bg-gray-200"
+                        class="px-4 transition-all py-2 group border border-neutral-200 rounded-xl hover:bg-gray-200 mt-2"
+                        to="/operations">
+                        <i class="fad fa-money-check mr-2"></i>
+                        Toutes les opérations
                     </router-link>
 
                     <router-link v-if ="role === 'admin'"  class="px-4 transition-all py-2 group border border-neutral-200 rounded-xl hover:bg-gray-200 mt-2"
