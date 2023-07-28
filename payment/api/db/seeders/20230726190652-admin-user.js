@@ -2,6 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    /*
     const adminUser = {
       lastname: 'Admin',
       firstname: 'User',
@@ -19,6 +20,7 @@ module.exports = {
     await queryInterface.bulkInsert('users', [adminUser], {});
 
     console.log('Admin user created successfully');
+    */
   },
 
   async down(queryInterface, Sequelize) {
