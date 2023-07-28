@@ -19,6 +19,9 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - REDIS_URl=${REDIS_URl}
       - REDIS_TOKEN=${REDIS_TOKEN}
+      - POSTMARK_API_TOKEN=${POSTMARK_API_TOKEN}
+      - POSTMARK_FROM=${POSTMARK_FROM}
+      - PSP_URL=${PSP_URL}
     ports:
       - "${BACK_PORT:-3000}:${BACK_PORT:-3000}" 
     container_name: node-api
@@ -42,5 +45,7 @@ services:
   merchant-ui:
     image: popokola/merchant-front:latest 
     ports:
-      - "${MERCHANT_PORT:-9393}:${MERCHANT_PORT:-9393}" 
+      - "${MERCHANT_PORT:-9393}:${MERCHANT_PORT:-9393}"
+    environment:
+      - VUE_APP_BASE_URL=${VUE_APP_BASE_URL}
     container_name: vuejs-merchant
