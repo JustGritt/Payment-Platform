@@ -34,6 +34,9 @@ services:
       - POSTMARK_FROM=${POSTMARK_FROM}
       - PSP_URL=${PSP_URL}
       - MONGO_URL=${MONGO_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_HOSTNAME=${DB_HOSTNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
     ports:
       - "${BACK_PORT:-3000}:${BACK_PORT:-3000}" 
     container_name: node-api
