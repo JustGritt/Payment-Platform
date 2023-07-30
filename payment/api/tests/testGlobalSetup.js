@@ -13,6 +13,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await connection.close();
   await close();
+  
 });
 
 // Delete the test database after all tests have run

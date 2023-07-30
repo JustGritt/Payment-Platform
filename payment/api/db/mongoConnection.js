@@ -29,8 +29,8 @@ const { MongoClient } = require('mongodb');
         return mongoDb;
     }
 
-    function close() {
-        return client.close();
+    async function close() {
+        await client.close();
     }
 
     module.exports = { connect, getDb, close };
