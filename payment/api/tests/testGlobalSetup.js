@@ -2,6 +2,7 @@ const { connection } = require('../db');
 const { database } = require('./testConfig');
 const app = require('../server');
 const fs = require('fs');
+const { getDb, connect, close } = require("../db/mongoConnection");
 
 const port = 4000; // Specify the desired port for the test environment
 
@@ -11,6 +12,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await connection.close();
+  await close();
 });
 
 // Delete the test database after all tests have run
