@@ -38,3 +38,19 @@ app.get("/health", authentificationGuard, (req, res) => {
   res.sendStatus(200);
 });
 ```
+
+## Running End-to-End test
+
+The end-to-end test is a test that will run the server and the database and will test the API from the front to the database. The test will be run on a different database than the one used for the development. The test database will be erased at the end of the test.
+
+```
+# You first have to build the docker compose
+docker compose up -d --build
+
+# Go to the front folder (Assuming you are in the root folder of the project)
+cd payment/front
+
+# Run the test
+npm run test:e2e
+```
+
