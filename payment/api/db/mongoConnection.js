@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 
 
-    const url = process.env.MONGO_URL || "mongodb+srv://esgi2023:wRYbzyFxOooDUbqn@nodejschallenge.cw6z6eq.mongodb.net/?retryWrites=true&w=majority";
+    const url = "mongodb+srv://esgi2023:wRYbzyFxOooDUbqn@nodejschallenge.cw6z6eq.mongodb.net/?retryWrites=true&w=majority";
     const client = new MongoClient(url);
     
     let mongoDb;
