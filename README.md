@@ -38,6 +38,15 @@ app.get("/health", authentificationGuard, (req, res) => {
   res.sendStatus(200);
 });
 ```
+## Running test
+
+```
+# Go to the front folder (Assuming you are in the root folder of the project)
+cd payment/api
+
+# Run the test
+npm run test
+```
 
 ## Running End-to-End test
 
