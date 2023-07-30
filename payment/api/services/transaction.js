@@ -50,7 +50,10 @@ module.exports = {
           return r.dataValues;
         })
       })
-      data.merchant_id = user.merchant_id
+      
+      
+      data.merchant_id = user.merchant_id;
+     
       const shemaValidation = Joi.object({
         currency: Joi.string().valid(...currencies.map((r) => r.name)).required(),
         merchant_id: Joi.number(),

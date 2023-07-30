@@ -43,7 +43,7 @@ const OperationController = require("./controllers/operation");
 app.use("/merchants", authentificationGuard({JWTAuth: true}), new GenericRouter(new GenericController(merchantService)));
 app.use("/operations", authentificationGuard({ JWTAuth: true, BasicAuth: true}), new OperationRouter(new OperationController(operationService)));
 app.use("/transactions",authentificationGuard({ JWTAuth: true, BasicAuth: true}), new TransactionRouter(new TransactionController(transactionService)));
-
+app.use("/transactionsState", new GenericRouter(new GenericController(require("./services/transactionState"))));
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
@@ -54,6 +54,7 @@ app.get("/health", authentificationGuard({ BasicAuth: true }), (req, res) => {
 
 app.post('/convert', require('./controllers/currencyConverter').currencyConverterController);
 
+app.use("/currencies", new GenericRouter(new GenericController(require("./services/currency"))));
 app.get('/regenerateToken', authentificationGuard({ JWTAuth: true}), (req, res) => {
 
   const merchantService = require("./services/merchant");
