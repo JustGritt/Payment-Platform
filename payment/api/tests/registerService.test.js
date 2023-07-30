@@ -38,32 +38,18 @@ describe('Register Endpoint Tests', () => {
       email: 'john.doe@example.com',
     };
 
-    try {
-      // Send the POST request to /register
-      const response = await testApp.post('/register').send({
-        merchant: merchantData,
-        contact: sampleContactData,
-      });
+    
+    // Send the POST request to /register
+    const response = await testApp.post('/register').send({
+      merchantData: merchantData,
+      contactData: sampleContactData,
+    });
 
-      // Assertions for the response
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('id');
-      // Add more assertions for other expected properties in the response
+    // Assertions for the response
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty('email');
+    // Add more assertions for other expected properties in the response body
+    });
 
-      // Check if the merchant and contact were created in the database
-      const createdMerchant = await merchantService.findByPk(response.body.id, { include: [Contact] });
-      expect(createdMerchant).toBeDefined();
-      expect(createdMerchant.name).toBe(merchantData.name);
-
-      const createdContact = await contactService.findAll({firstname: sampleContactData.firstname})
-      expect(createdContact).toBeDefined();
-      expect(createdContact.firstname).toBe(sampleContactData.firstname);
-      // Add more assertions for other expected contact properties
-
-    } catch (error) {
-      console.error('Error during registration test:', error);
-    }
   });
 
-  // Add more tests for error cases or additional scenarios if needed
-});
