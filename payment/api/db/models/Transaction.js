@@ -79,6 +79,8 @@ module.exports = function (connection) {
         }
     })
 
+    //remove the hook for easier testing
+    /*
     Transaction.addHook("afterCreate", async (transaction, options) => {
         const TransactionHistory = connection.models.TransactionHistory;
         const Operation = connection.models.Operation;
@@ -95,6 +97,8 @@ module.exports = function (connection) {
             transaction_amount: transaction.transaction_amount
         })
     });
+    */
+    
 
     Transaction.addHook("afterCreate", async (transaction, options) => {
         // ...

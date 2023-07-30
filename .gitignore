@@ -6,7 +6,6 @@ node_modules
 # payment API directory
 payment/api/node_modules
 payment/api/dist
-payment/api/.env
 payment/pgdata
 payment/mongodata
 

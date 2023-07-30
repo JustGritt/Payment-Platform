@@ -7,6 +7,7 @@ module.exports = function (Service) {
     return {
         post: async (req, res, next) => {
             try {
+                
                 const service = await Service.create(req.body, req.user);
                 res.status(201).json(service);
             } catch (err) {
